@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import ReactMarkdown from 'react-markdown'
 import { ChevronLeft, BookOpen, Star, ArrowRight } from "lucide-react"
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout"
@@ -45,6 +46,18 @@ export const QuestPage: React.FC = () => {
 
     fetchKnowledge()
   }, [node])
+
+  if (!activeAdventure) {
+    return (
+      <DashboardLayout variant="quest">
+        <div className="flex-1 overflow-y-auto flex items-center justify-center flex-col gap-4 pt-24 md:pt-20">
+          <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+          <p className="font-pixel text-sm text-secondary animate-pulse">Memuat Petualangan...</p>
+          <MotionButton onClick={() => navigate('/')} className="mt-4">Kembali ke Beranda</MotionButton>
+        </div>
+      </DashboardLayout>
+    )
+  }
 
   if (!node) {
     return (
@@ -101,9 +114,9 @@ export const QuestPage: React.FC = () => {
                       <BookOpen className="w-8 h-8 text-secondary shrink-0 mt-1" />
                       <div>
                         <h2 className="text-2xl font-heading text-secondary mb-4">Materi Bacaan Utama</h2>
-                        <p className="text-lg text-foreground/90 font-sans leading-relaxed whitespace-pre-wrap">
-                          {summary.content}
-                        </p>
+                        <div className="text-lg text-foreground/90 font-sans leading-relaxed whitespace-pre-wrap prose prose-invert prose-p:mb-4">
+                          <ReactMarkdown>{summary.content}</ReactMarkdown>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -116,11 +129,11 @@ export const QuestPage: React.FC = () => {
                   <Star className="w-5 h-5" /> Poin Penting
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {summary.keyPoints.map((point, idx) => (
+                  {(summary?.keyPoints || []).map((point, idx) => (
                     <ScaleIn key={idx} style={{ transitionDelay: `${idx * 150}ms` }}>
                       <Flashcard 
                         keyword={`Konsep ${idx + 1}`} 
-                        definition={point} 
+                        definition={point.replace(/\*\*/g, '')} 
                       />
                     </ScaleIn>
                   ))}

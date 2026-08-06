@@ -1,5 +1,6 @@
 import React from "react"
 import { motion } from "framer-motion"
+import adventureMapImg from "@/assets/adventure-map.png"
 
 export const MapBackground: React.FC = () => {
   return (
@@ -7,6 +8,12 @@ export const MapBackground: React.FC = () => {
       
       {/* Layer 1: Night fantasy gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0F172A] via-[#1E1B4B] to-[#0F172A]" />
+
+      {/* Layer 1.5: Adventure Map Grid Background */}
+      <div 
+        className="absolute inset-0 opacity-20 mix-blend-overlay bg-repeat bg-[length:128px_128px]"
+        style={{ backgroundImage: `url(${adventureMapImg})` }}
+      />
 
       {/* Layer 7: Distant mountains (SVG polygon, blurred) */}
       <div className="absolute top-0 left-0 w-full h-64 opacity-20 blur-[2px]">

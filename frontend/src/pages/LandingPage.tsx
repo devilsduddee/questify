@@ -1,5 +1,6 @@
 import React from "react"
 import { useNavigate } from "react-router-dom"
+import landingBgImg from "@/assets/landing-bg.png"
 import { Target, Trophy, Play, Wand2, Sword } from "lucide-react"
 
 import { MotionButton } from "@/components/ui/button"
@@ -17,7 +18,10 @@ export const LandingPage: React.FC = () => {
 
   if (hasAdventures) {
     return (
-      <div className="min-h-screen bg-background overflow-hidden relative selection:bg-primary/30 flex flex-col items-center justify-center">
+      <div 
+        className="min-h-screen bg-background overflow-hidden relative selection:bg-primary/30 flex flex-col items-center justify-center bg-cover bg-center"
+        style={{ backgroundImage: `url(${landingBgImg})` }}
+      >
         {/* Background Particles/Stars */}
         <div className="absolute inset-0 pointer-events-none opacity-20">
           <div className="absolute top-[10%] left-[20%] w-2 h-2 bg-secondary rounded-full animate-float" style={{ animationDelay: "0s" }} />
@@ -56,10 +60,10 @@ export const LandingPage: React.FC = () => {
             <MotionButton 
               size="lg" 
               variant="outline" 
-              className="w-full font-pixel text-base py-6 bg-card/80 border-border hover:bg-secondary/10 hover:border-secondary/50 hover:text-secondary transition-all"
+              className="w-full font-pixel text-base py-6 bg-card/80 border-border hover:bg-secondary/10 hover:border-secondary/50 hover:text-secondary transition-all group flex items-center justify-center"
               onClick={() => navigate('/adventures')}
             >
-              📚 Petualanganku
+              <span className="material-symbols-outlined text-amber-400 group-hover:rotate-12 transition-transform mr-2">explore</span> Petualanganku
             </MotionButton>
 
             <Dialog>
@@ -67,9 +71,9 @@ export const LandingPage: React.FC = () => {
                 <MotionButton 
                   size="lg" 
                   variant="outline" 
-                  className="w-full font-pixel text-base py-6 bg-card/80 border-border hover:bg-success/10 hover:border-success/50 hover:text-success transition-all"
+                  className="w-full font-pixel text-base py-6 bg-card/80 border-border hover:bg-success/10 hover:border-success/50 hover:text-success transition-all group flex items-center justify-center"
                 >
-                  ➕ Petualangan Baru
+                  <span className="material-symbols-outlined text-amber-400 group-hover:scale-110 transition-transform mr-2">auto_awesome</span> Petualangan Baru
                 </MotionButton>
               </DialogTrigger>
               <DialogContent className="sm:max-w-4xl bg-card border-secondary/50 max-h-[90vh] overflow-y-auto">
@@ -97,7 +101,10 @@ export const LandingPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden relative selection:bg-primary/30">
+    <div 
+      className="min-h-screen bg-background overflow-hidden relative selection:bg-primary/30 bg-cover bg-center"
+      style={{ backgroundImage: `url(${landingBgImg})` }}
+    >
       {/* Background Particles/Stars (Static representation) */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
         <div className="absolute top-[10%] left-[20%] w-2 h-2 bg-secondary rounded-full animate-float" style={{ animationDelay: "0s" }} />
@@ -114,9 +121,6 @@ export const LandingPage: React.FC = () => {
             <Sword className="w-8 h-8 text-secondary" />
             <span className="font-heading text-2xl text-glow text-secondary tracking-widest font-bold">Questify</span>
           </div>
-          <MotionButton variant="outline" className="border-secondary text-secondary hover:bg-secondary/20 font-pixel text-xs">
-            Masuk Kedai
-          </MotionButton>
         </nav>
 
         {/* Hero Section */}
@@ -137,22 +141,41 @@ export const LandingPage: React.FC = () => {
                 <MotionButton size="lg" variant="default" className="w-full sm:w-auto font-pixel text-sm group" onClick={() => document.getElementById("upload-section")?.scrollIntoView({ behavior: "smooth" })}>
                   <Play className="mr-2 w-4 h-4 group-hover:animate-pulse" /> Mulai Petualangan
                 </MotionButton>
-                <MotionButton size="lg" variant="ghost" className="w-full sm:w-auto font-heading tracking-wide">
-                  Lihat Demo Peta
-                </MotionButton>
               </div>
             </ScaleIn>
           </div>
           <div className="flex-1 w-full max-w-lg relative">
             <FadeIn>
-              <div className="relative aspect-square w-full">
-                {/* Abstract Hero Image / Map Representation */}
-                <div className="absolute inset-0 bg-card rounded-full border-4 border-primary/30 box-glow-gold overflow-hidden animate-pulse-glow">
-                  <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-background to-background" />
+              <div className="relative w-full aspect-[4/3] rounded-2xl backdrop-blur-md bg-slate-900/60 border-2 border-amber-500/40 shadow-[0_0_25px_rgba(168,85,247,0.3)] overflow-hidden flex items-center justify-center p-8">
+                
+                {/* Floating Badge */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-[#1a0f2e] border border-[#d3bbff]/50 px-4 py-1 rounded shadow-[0_0_10px_#6d28d9] z-20">
+                  <span className="font-pixel text-[10px] tracking-widest text-[#d3bbff] whitespace-nowrap">QUEST MAP PREVIEW</span>
                 </div>
-                <QuestNode state="boss" label="Ujian Akhir" className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150" />
-                <QuestNode state="available" label="Bab 2" className="absolute bottom-1/4 left-1/4" />
-                <QuestNode state="completed" label="Bab 1" className="absolute bottom-1/3 right-1/4" />
+
+                {/* Map Grid Background */}
+                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+                
+                <div className="relative w-full h-full">
+                  {/* Connecting Lines */}
+                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+                    <path d="M 70 70 Q 50 85 30 60" fill="none" stroke="#F59E0B" strokeWidth="1" strokeDasharray="2,2" className="animate-pulse" />
+                    <path d="M 30 60 Q 20 20 50 30" fill="none" stroke="#8B5CF6" strokeWidth="1" strokeDasharray="2,2" className="animate-pulse" style={{ animationDelay: '500ms' }} />
+                  </svg>
+
+                  {/* Nodes */}
+                  <div className="absolute top-[70%] left-[70%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-[0_0_15px_#F59E0B] transition-all duration-300 z-10 cursor-pointer">
+                    <QuestNode state="completed" label="Bab 1" />
+                  </div>
+                  
+                  <div className="absolute top-[60%] left-[30%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-[0_0_15px_#F59E0B] transition-all duration-300 z-10 cursor-pointer">
+                    <QuestNode state="available" label="Bab 2" />
+                  </div>
+
+                  <div className="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-[0_0_20px_#EF4444] transition-all duration-300 z-10 cursor-pointer">
+                    <QuestNode state="boss" label="Ujian Akhir" className="scale-125" />
+                  </div>
+                </div>
               </div>
             </FadeIn>
           </div>
@@ -239,10 +262,7 @@ export const LandingPage: React.FC = () => {
           <p className="text-sm text-muted-foreground font-sans text-center">
             &copy; {new Date().getFullYear()} Questify. A Vibe Coding AI Education Demo.
           </p>
-          <div className="flex gap-4">
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">GitHub</a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">Twitter</a>
-          </div>
+          <div className="hidden md:block w-[100px]"></div> {/* Invisible spacer to keep copyright centered */}
         </div>
       </footer>
     </div>

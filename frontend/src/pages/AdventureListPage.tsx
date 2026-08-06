@@ -1,7 +1,8 @@
 import React from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 // removed motion
 import { Sword, Trash2, Play, Calendar, Trophy, Coins } from "lucide-react"
+import questifyLogo from "@/assets/questify-q-logo.png"
 
 import { useAdventureStore } from "@/store/useAdventureStore"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
@@ -27,18 +28,15 @@ export const AdventureListPage: React.FC = () => {
     <div className="min-h-screen bg-background relative selection:bg-primary/30 font-sans">
       
       {/* Navbar Minimalist */}
-      <nav className="h-20 border-b border-secondary/20 bg-[#0F172A]/80 backdrop-blur-md px-4 md:px-8 flex items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-          <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center border border-primary text-primary shadow-[0_0_12px_rgba(109,40,217,0.5)]">
-            <Sword className="w-6 h-6" />
+      <nav className="h-20 border-b border-secondary/20 bg-[#0F172A]/80 backdrop-blur-md px-4 md:px-8 flex items-center shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-12 h-12 flex items-center justify-center shadow-[0_0_12px_rgba(109,40,217,0.5)] bg-black/50 rounded overflow-hidden border border-primary/50">
+            <img src={questifyLogo} alt="Questify Logo" className="w-full h-full object-cover" />
           </div>
           <span className="font-heading font-bold text-xl tracking-wider text-glow text-secondary hidden lg:block">
             QUESTIFY
           </span>
-        </div>
-        <MotionButton variant="outline" className="border-secondary text-secondary hover:bg-secondary/20 font-pixel text-xs" onClick={() => navigate("/")}>
-          Main Menu
-        </MotionButton>
+        </Link>
       </nav>
 
       <div className="container mx-auto px-4 py-12 max-w-5xl">

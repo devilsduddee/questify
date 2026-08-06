@@ -3,7 +3,7 @@
 
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 // Using Gemini 1.5 Flash via OpenRouter for fast, cheap JSON generation
-const DEFAULT_MODEL = "google/gemma-4-26b-a4b-it:free"
+const DEFAULT_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free"
 
 // Fallback key if not provided (though security.md dictates environment variables)
 const getApiKey = () => import.meta.env.VITE_OPENROUTER_API_KEY || ""
@@ -25,26 +25,26 @@ async function fetchWithRetry(url: string, options: FetchOptions = {}): Promise<
   for (let attempt = 0; attempt <= retries; attempt++) {
     const controller = new AbortController()
     const id = setTimeout(() => controller.abort(), timeoutMs)
-    
+
     try {
       const response = await fetch(url, {
         ...fetchOptions,
         signal: controller.signal,
       })
-      
+
       clearTimeout(id)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      
+
       return response
     } catch (error: unknown) {
       clearTimeout(id)
-      
+
       const err = error instanceof Error ? error : new Error(String(error))
       lastError = err
-      
+
       if (err.name === 'AbortError') {
         console.warn(`[AI Service] Attempt ${attempt + 1} timed out.`)
       } else {
@@ -94,16 +94,25 @@ async function callOpenRouter(systemPrompt: string, userMessage: string, timeout
   })
 
   const data = await response.json()
-  
+
   if (!data.choices || data.choices.length === 0) {
     throw new Error("Invalid response from AI service.")
   }
 
-  const content = data.choices[0].message.content
+  let content = data.choices[0].message.content
+  // Strip markdown code blocks if the LLM includes them
+  content = content.replace(/^```[a-z]*\n/i, '').replace(/\n```$/i, '').trim()
+
   try {
     return JSON.parse(content)
-  } catch {
-    throw new Error("AI returned malformed JSON.")
+  } catch (err) {
+    // Basic repair attempt if JSON is slightly malformed (e.g. trailing comma)
+    try {
+      const repaired = content.replace(/,\s*([\]}])/g, '$1')
+      return JSON.parse(repaired)
+    } catch {
+      throw new Error("AI returned malformed JSON.")
+    }
   }
 }
 
@@ -128,7 +137,7 @@ export interface QuestMap {
 export async function generateQuest(syllabusText: string): Promise<QuestMap> {
   const prompt = `You are a curriculum designer for a retro RPG game.
 Your task is to take the following syllabus or learning material text and turn it into a structured "Quest Map".
-ALL OUTPUT TEXT MUST BE IN INDONESIAN (BAHASA INDONESIA).
+CRITICAL REQUIREMENT: All generated lore summaries, relic names, and flashcard descriptions MUST be written in Indonesian with an immersive fantasy RPG tone. Do NOT output English text.
 
 Extract the main topics into a sequential array of learning nodes. The first node should be available, the others locked, and the final node must be a boss node.
 
@@ -148,7 +157,7 @@ Output strictly in the following JSON format:
     }
   ]
 }`
-  
+
   return await callOpenRouter(prompt, syllabusText, 25000) as QuestMap
 }
 
@@ -164,7 +173,7 @@ export async function generateSummary(topicTitle: string, syllabusContext: strin
   const prompt = `You are an AI scholar in a retro RPG game.
 The player has encountered a quest node titled: "${topicTitle}".
 Context: ${syllabusContext}
-ALL OUTPUT TEXT MUST BE IN INDONESIAN (BAHASA INDONESIA).
+CRITICAL REQUIREMENT: All generated lore summaries, relic names, and flashcard descriptions MUST be written in Indonesian with an immersive fantasy RPG tone. Do NOT output English text.
 
 Provide a learning summary in the following JSON format:
 {
@@ -197,9 +206,9 @@ export async function generateQuiz(topicTitle: string, syllabusContext: string, 
   const prompt = `You are the Game Master of a retro RPG. 
 The player is facing a boss battle for the topic: "${topicTitle}".
 Context: ${syllabusContext}
-ALL OUTPUT TEXT MUST BE IN INDONESIAN (BAHASA INDONESIA).
+CRITICAL REQUIREMENT: All generated lore summaries, relic names, and flashcard descriptions MUST be written in Indonesian with an immersive fantasy RPG tone. Do NOT output English text.
 
-Generate exactly ${numQuestions} multiple-choice questions to test their knowledge.
+Generate exactly ${numQuestions} multiple-choice questions that test the player's knowledge.
 Output strictly in the following JSON format:
 {
   "bossName": "Nama Bos Kreatif (e.g. Lord Syntax, The DOM Dragon)",

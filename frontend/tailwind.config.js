@@ -20,6 +20,8 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "#0F172A",
         foreground: "hsl(var(--foreground))",
+        "background-night": "#0F172A",
+        "background-deep": "#1E293B",
         primary: {
           DEFAULT: "#6D28D9",
           foreground: "hsl(var(--primary-foreground))",
@@ -32,9 +34,11 @@ module.exports = {
           DEFAULT: "#EF4444",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        "boss-red": "#EF4444",
         success: {
           DEFAULT: "#10B981",
         },
+        "success-green": "#10B981",
         muted: {
           DEFAULT: "#1E293B",
           foreground: "hsl(var(--muted-foreground))",

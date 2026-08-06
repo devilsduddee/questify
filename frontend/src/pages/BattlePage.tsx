@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import { Trophy, Skull, Swords, ShieldAlert, Coins } from "lucide-react"
+import { Trophy, Skull, Swords, Coins } from "lucide-react"
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout"
 import { useAdventureStore } from "@/store/useAdventureStore"
 import { usePlayerStore } from "@/store/usePlayerStore"
 import { useBattleStore } from "@/store/useBattleStore"
 import { generateQuiz } from "@/services/ai.service"
-import { BossCard } from "@/components/common/BossCard"
-import { ProgressBar } from "@/components/common/ProgressBar"
-import { Card } from "@/components/ui/card"
 import { MotionButton } from "@/components/ui/button"
-import { SlideUp, Shake, ScaleIn } from "@/components/common/AnimationWrapper"
+import { SlideUp, ScaleIn } from "@/components/common/AnimationWrapper"
 import { BattleBackground } from "@/components/battle/BattleBackground"
+import { QuizArena } from "@/components/battle/QuizArena"
 
 export const BattlePage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -185,86 +183,31 @@ export const BattlePage: React.FC = () => {
           </SlideUp>
         )}
 
-        {/* Battle Arena */}
-        <div className="flex flex-col flex-1 gap-10 mt-6">
-            
-          {/* Top: Boss */}
-          {battle.status === "active" && (
-            <div className="flex justify-center pt-8 mb-4">
-              <SlideUp>
-                <BossCard 
-                  name={battle.bossName} 
-                  currentHp={battle.bossHp} 
-                  maxHp={battle.maxBossHp} 
-                  isHit={bossHit} 
-                />
-              </SlideUp>
-            </div>
-          )}
-
-          {/* Center: Quiz or Result */}
-          <div className="flex-1 flex flex-col items-center w-full">
+          {/* Battle Arena */}
+          <div className="flex flex-col flex-1 mt-6">
             <AnimatePresence mode="wait">
-              {battle.status === "active" && currentQuestion && (
-                <motion.div 
-                  key={`q-${battle.currentQuestionIndex}`}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.3 }}
-                  className="w-full max-w-4xl flex flex-col gap-8"
+              {battle.status === "active" && (
+                <motion.div
+                  key="active-battle"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="w-full h-full"
                 >
-                  {/* Question Card */}
-                  <Card className="border-secondary/50 box-glow-gold p-8 md:p-10 text-center bg-[#0F172A]/90 backdrop-blur-md relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary to-transparent" />
-                    <ShieldAlert className="w-12 h-12 text-secondary/20 absolute top-4 left-4" />
-                    
-                    <h3 className="font-sans text-2xl md:text-3xl leading-relaxed text-foreground font-medium drop-shadow-md relative z-10">
-                      {currentQuestion.question}
-                    </h3>
-                  </Card>
-                  
-                  {/* Answer Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                    {currentQuestion.options.map((opt, idx) => {
-                      const isSelected = selectedAnswer === idx
-                      let cardStateClass = "border-primary/30 hover:border-primary hover:bg-primary/10 hover:shadow-[0_0_15px_rgba(109,40,217,0.4)]"
-                      let iconColor = "text-primary/50"
-                      
-                      if (isSelected) {
-                        if (answerState === "correct") {
-                          cardStateClass = "border-success bg-success/20 shadow-[0_0_20px_rgba(34,197,94,0.6)]"
-                          iconColor = "text-success"
-                        } else if (answerState === "wrong") {
-                          cardStateClass = "border-destructive bg-destructive/20 shadow-[0_0_20px_rgba(239,68,68,0.6)] scale-95"
-                          iconColor = "text-destructive"
-                        } else {
-                          cardStateClass = "border-secondary bg-secondary/20 shadow-[0_0_20px_rgba(245,158,11,0.6)] scale-105"
-                          iconColor = "text-secondary"
-                        }
-                      } else if (selectedAnswer !== null) {
-                        cardStateClass = "border-border/50 bg-background/50 opacity-50 grayscale"
-                      }
-
-                      return (
-                        <motion.button
-                          key={idx}
-                          whileHover={selectedAnswer === null ? { scale: 1.02 } : {}}
-                          whileTap={selectedAnswer === null ? { scale: 0.98 } : {}}
-                          className={`relative text-left p-6 rounded-xl border-2 transition-all duration-300 flex items-start gap-4 ${cardStateClass}`}
-                          onClick={() => handleAnswer(idx)}
-                          disabled={selectedAnswer !== null}
-                        >
-                          <div className={`w-8 h-8 rounded bg-background/50 flex items-center justify-center font-pixel text-sm shrink-0 border border-current ${iconColor}`}>
-                            {['A','B','C','D'][idx]}
-                          </div>
-                          <span className="font-sans text-lg text-foreground leading-relaxed mt-0.5">
-                            {opt}
-                          </span>
-                        </motion.button>
-                      )
-                    })}
-                  </div>
+                  <QuizArena
+                    bossName={battle.bossName}
+                    bossHp={battle.bossHp}
+                    maxBossHp={battle.maxBossHp}
+                    playerName={name}
+                    playerHp={battle.playerHp}
+                    maxPlayerHp={battle.maxPlayerHp}
+                    currentQuestion={currentQuestion || null}
+                    selectedAnswer={selectedAnswer}
+                    answerState={answerState}
+                    onAnswer={handleAnswer}
+                    bossHit={bossHit}
+                    playerHit={playerHit}
+                  />
                 </motion.div>
               )}
 
@@ -334,44 +277,6 @@ export const BattlePage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-
-      {/* Fixed Bottom Player Stats */}
-      {battle.status === "active" && (
-        <div className="fixed bottom-0 left-0 w-full p-4 pointer-events-none z-50 flex justify-center">
-          <SlideUp className="pointer-events-auto">
-            <Shake trigger={playerHit}>
-              <Card className="w-96 border-2 border-primary/50 bg-[#0F172A]/90 backdrop-blur-md p-4 flex items-center gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] rounded-2xl">
-                <div className="w-16 h-16 bg-muted rounded-xl pixel-border border-secondary flex items-center justify-center text-3xl shadow-inner">
-                  🛡️
-                </div>
-                <div className="flex-1 flex flex-col gap-2">
-                  <div className="flex justify-between items-center text-sm font-pixel">
-                    <span className="text-primary drop-shadow-md text-glow">{name}</span>
-                    <motion.span 
-                      key={battle.playerHp}
-                      initial={{ scale: 1.5, color: "#ef4444" }}
-                      animate={{ scale: 1, color: "#f87171" }}
-                      className="text-destructive drop-shadow-md"
-                    >
-                      {battle.playerHp}/{battle.maxPlayerHp} HP
-                    </motion.span>
-                  </div>
-                  <div className="relative p-1 bg-black/50 rounded-full border border-destructive/30 shadow-inner">
-                    <ProgressBar 
-                      progress={(battle.playerHp / battle.maxPlayerHp) * 100} 
-                      colorClass="bg-gradient-to-r from-red-600 to-red-400 shadow-[0_0_10px_rgba(239,68,68,0.8)]" 
-                      bgClass="bg-transparent"
-                      heightClass="h-4"
-                    />
-                  </div>
-                </div>
-              </Card>
-            </Shake>
-          </SlideUp>
-        </div>
-      )}
-
     </DashboardLayout>
   )
 }

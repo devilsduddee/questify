@@ -207,7 +207,8 @@ export const useAdventureStore = create<AdventureState>()(
       })
     }),
     {
-      name: 'questify-adventure-storage',
+      name: 'questify-adventure-storage-v2',
+      version: 2,
       onRehydrateStorage: () => (state, error) => {
         if (error || !state) return
 

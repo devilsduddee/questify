@@ -30,15 +30,15 @@ export const QuestNode: React.FC<QuestNodeProps> = ({ state, label, onClick, cla
   const getStyle = () => {
     switch (state) {
       case "locked":
-        return "bg-muted border-muted-foreground opacity-70 grayscale pixel-emboss"
+        return "bg-muted border-muted-foreground opacity-70 grayscale pixel-borders"
       case "completed":
-        return "bg-background border-success box-glow pixel-emboss"
+        return "bg-background border-success-green glow-green pixel-borders"
       case "boss":
-        return "bg-background border-destructive glow-purple w-16 h-16 rpg-frame-inset animate-magic-pulse"
+        return "bg-background border-boss-red glow-red w-16 h-16 animate-magic-pulse pixel-borders"
       case "available":
-        return "bg-background border-secondary box-glow-gold animate-pulse-glow pixel-emboss"
+        return "bg-background border-secondary glow-gold animate-pulse-glow pixel-borders"
       default:
-        return "bg-background border-primary pixel-emboss"
+        return "bg-background border-primary pixel-borders"
     }
   }
 
