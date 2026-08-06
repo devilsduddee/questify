@@ -1,10 +1,8 @@
 import React from 'react';
 import { useAdventureStore } from '../../store/useAdventureStore';
-import { usePlayerStore } from '../../store/usePlayerStore';
 import mageAvatar from '../../assets/mage-avatar.png';
 
 export const CharacterWidget: React.FC = () => {
-  const { name } = usePlayerStore();
   const adventure = useAdventureStore((state) => state.getActive());
 
   if (!adventure) return null;
