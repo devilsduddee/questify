@@ -15,7 +15,6 @@ import { IntroModal } from "@/components/map/IntroModal"
 export const AdventureMap: React.FC = () => {
   const [isLoreOpen, setIsLoreOpen] = useState(false)
   const activeAdventure = useAdventureStore(state => state.getActive())
-  const worldName = activeAdventure?.worldName || "Peta Petualangan"
   const nodes = activeAdventure?.nodes || []
   const activeNodeId = activeAdventure?.activeNodeId || null
   const navigate = useNavigate()

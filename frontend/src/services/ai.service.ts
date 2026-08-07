@@ -105,7 +105,7 @@ async function callOpenRouter(systemPrompt: string, userMessage: string, timeout
 
   try {
     return JSON.parse(content)
-  } catch (err) {
+  } catch {
     // Basic repair attempt if JSON is slightly malformed (e.g. trailing comma)
     try {
       const repaired = content.replace(/,\s*([\]}])/g, '$1')

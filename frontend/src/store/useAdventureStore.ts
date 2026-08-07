@@ -159,7 +159,7 @@ export const useAdventureStore = create<AdventureState>()(
         const { activeAdventureId, adventures } = state
         if (!activeAdventureId) return state
 
-        return {
+        const newState = {
           adventures: adventures.map(adv => {
             if (adv.id !== activeAdventureId) return adv
 
@@ -178,10 +178,10 @@ export const useAdventureStore = create<AdventureState>()(
         }
 
         // Post-update: check for Level Master achievement
-        const updatedAdv = newState.adventures.find(a => a.id === activeAdventureId)
+        const updatedAdv = newState.adventures.find((a: Adventure) => a.id === activeAdventureId)
         if (updatedAdv && updatedAdv.level >= 5) {
           const playerStore = usePlayerStore.getState()
-          if (!playerStore.globalAchievements.find(a => a.id === ACH_LEVEL_MASTER)) {
+          if (!playerStore.globalAchievements.find((a: { id: string }) => a.id === ACH_LEVEL_MASTER)) {
             playerStore.unlockGlobalAchievement(ACH_LEVEL_MASTER)
           }
         }

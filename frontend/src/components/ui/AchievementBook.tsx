@@ -5,7 +5,6 @@ import { X, Lock, Trophy } from "lucide-react"
 import { usePlayerStore } from "@/store/usePlayerStore"
 import { useAdventureStore } from "@/store/useAdventureStore"
 import { 
-  ACHIEVEMENT_REGISTRY, 
   AchievementDef,
   getGlobalAchievements,
   getAdventureAchievements
@@ -33,7 +32,7 @@ const rarityIconColors = {
 export const AchievementBook: React.FC<AchievementBookProps> = ({ isOpen, onClose }) => {
   const { globalAchievements } = usePlayerStore()
   const activeAdventure = useAdventureStore(state => state.getActive())
-  const adventureAchievements = activeAdventure?.achievements || []
+  const adventureAchievements = useMemo(() => activeAdventure?.achievements || [], [activeAdventure?.achievements])
 
   // Create lookup maps for fast O(1) checking
   const globalUnlockedMap = useMemo(() => {
