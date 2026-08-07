@@ -1,0 +1,28 @@
+/* src/styles/effects.css */
+@layer utilities {
+  .glow-quest {
+    box-shadow: var(--glow-quest-purple);
+  }
+  .glow-boss {
+    box-shadow: var(--glow-boss-red);
+  }
+  .glow-achievement {
+    box-shadow: var(--glow-achievement-gold);
+  }
+  .glow-info {
+    box-shadow: var(--glow-info-cyan);
+  }
+  .glow-success {
+    box-shadow: var(--glow-success-green);
+  }
+  
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-panel {
+    box-shadow: var(--shadow-panel);
+  }
+  .shadow-button {
+    box-shadow: var(--shadow-button);
+  }
+}

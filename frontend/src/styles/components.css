@@ -1,0 +1,11 @@
+/* src/styles/components.css */
+@layer components {
+  /* 8-bit borders System */
+  .pixel-borders {
+    border-width: 4px;
+    border-style: solid;
+    border-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="transparent"/><rect width="2" height="2" x="0" y="0" fill="%236D28D9"/><rect width="2" height="2" x="2" y="0" fill="%236D28D9"/><rect width="2" height="2" x="4" y="0" fill="%236D28D9"/><rect width="2" height="2" x="6" y="0" fill="%236D28D9"/><rect width="2" height="2" x="0" y="2" fill="%236D28D9"/><rect width="2" height="2" x="6" y="2" fill="%236D28D9"/><rect width="2" height="2" x="0" y="4" fill="%236D28D9"/><rect width="2" height="2" x="6" y="4" fill="%236D28D9"/><rect width="2" height="2" x="0" y="6" fill="%236D28D9"/><rect width="2" height="2" x="2" y="6" fill="%236D28D9"/><rect width="2" height="2" x="4" y="6" fill="%236D28D9"/><rect width="2" height="2" x="6" y="6" fill="%236D28D9"/></svg>') 2 stretch;
+  }
+  
+  /* Additional component abstractions can be added here */
+}

@@ -72,7 +72,7 @@ export const BattlePage: React.FC = () => {
           <div className="min-h-full flex flex-col items-center justify-center p-6 text-center">
             <AnimatePresence>
               <ScaleIn>
-                <Skull className="w-32 h-32 text-destructive mb-8 animate-pulse drop-shadow-[0_0_20px_rgba(239,68,68,0.8)] mx-auto" />
+                <Skull className="w-32 h-32 text-destructive mb-8 animate-pulse shadow-glow-boss mx-auto" />
                 <h1 className="font-heading text-5xl text-destructive text-glow mb-4 uppercase tracking-widest">Memanggil Bos...</h1>
                 <p className="font-pixel text-secondary text-sm">Menyiapkan arena pertarungan gelap...</p>
               </ScaleIn>
@@ -171,7 +171,7 @@ export const BattlePage: React.FC = () => {
                   <span className="font-pixel text-[10px] text-muted-foreground mb-2">PROGRESS {battle.currentQuestionIndex + 1}/{battle.questions.length}</span>
                   <div className="w-full bg-black/50 h-2 rounded-full overflow-hidden border border-border">
                     <motion.div 
-                      className="h-full bg-secondary shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+                      className="h-full bg-secondary shadow-glow-achievement"
                       initial={{ width: 0 }}
                       animate={{ width: `${progressPercentage}%` }}
                       transition={{ duration: 0.5 }}
@@ -217,7 +217,7 @@ export const BattlePage: React.FC = () => {
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ type: "spring", bounce: 0.5, duration: 1 }}
-                    className="w-40 h-40 rounded-full bg-success/20 flex items-center justify-center shadow-[0_0_50px_rgba(34,197,94,0.8)] border-4 border-success"
+                    className="w-40 h-40 rounded-full bg-success/20 flex items-center justify-center shadow-panel border-4 border-success"
                   >
                     <Trophy className="w-20 h-20 text-success" />
                   </motion.div>
@@ -245,7 +245,7 @@ export const BattlePage: React.FC = () => {
                     </div>
                   </div>
 
-                  <MotionButton size="lg" className="mt-8 font-pixel px-12 py-6 text-lg hover:shadow-[0_0_20px_rgba(109,40,217,0.8)]" onClick={handleVictory}>
+                  <MotionButton size="lg" className="mt-8 font-pixel px-12 py-6 text-lg hover:shadow-glow-quest" onClick={handleVictory}>
                     KLAIM HADIAH
                   </MotionButton>
                 </ScaleIn>
@@ -256,7 +256,7 @@ export const BattlePage: React.FC = () => {
                   <motion.div 
                     animate={{ y: [0, 10, 0] }}
                     transition={{ duration: 4, repeat: Infinity }}
-                    className="w-40 h-40 rounded-full bg-destructive/20 flex items-center justify-center shadow-[0_0_50px_rgba(239,68,68,0.8)] border-4 border-destructive"
+                    className="w-40 h-40 rounded-full bg-destructive/20 flex items-center justify-center shadow-glow-boss border-4 border-destructive"
                   >
                     <Skull className="w-20 h-20 text-destructive" />
                   </motion.div>

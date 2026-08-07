@@ -1,0 +1,46 @@
+/* src/styles/tokens.css */
+@layer base {
+  :root {
+    /* Spacing Scale */
+    --spacing-xs: 0.25rem; /* 4px */
+    --spacing-sm: 0.5rem;  /* 8px */
+    --spacing-md: 1rem;    /* 16px */
+    --spacing-lg: 1.5rem;  /* 24px */
+    --spacing-xl: 2rem;    /* 32px */
+    
+    /* Animation Durations */
+    --duration-click: 100ms;
+    --duration-hover: 150ms;
+    --duration-modal: 250ms;
+    --duration-toast: 300ms;
+    --duration-screen: 400ms;
+
+    /* Shadow & Glow Tokens */
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-panel: 0 10px 15px -3px rgba(0, 0, 0, 0.7), 0 4px 6px -2px rgba(0, 0, 0, 0.5);
+    --shadow-button: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+    
+    /* Contextual Glows */
+    --glow-quest-purple: 0 0 15px theme('colors.primary.DEFAULT'), inset 0 0 10px theme('colors.primary.DEFAULT');
+    --glow-boss-red: 0 0 15px theme('colors.destructive.DEFAULT'), inset 0 0 10px theme('colors.destructive.DEFAULT');
+    --glow-achievement-gold: 0 0 15px theme('colors.secondary.DEFAULT'), inset 0 0 10px theme('colors.secondary.DEFAULT');
+    --glow-info-cyan: 0 0 15px theme('colors.accent.DEFAULT'), inset 0 0 10px theme('colors.accent.DEFAULT');
+    --glow-success-green: 0 0 15px theme('colors.success.DEFAULT'), inset 0 0 10px theme('colors.success.DEFAULT');
+
+    /* Typography Scale */
+    --text-display: 3rem;
+    --text-title-world: 2.25rem;
+    --text-title-section: 1.5rem;
+    --text-title-card: 1.125rem;
+    --text-body: 1rem;
+    --text-caption: 0.875rem;
+    --text-label: 0.75rem;
+
+    /* Border System */
+    --border-panel: 4px solid theme('colors.primary.DEFAULT');
+    --border-modal: 4px solid theme('colors.secondary.DEFAULT');
+    --border-button: 2px solid theme('colors.primary.DEFAULT');
+    --border-node: 2px solid theme('colors.accent.DEFAULT');
+    --border-badge: 1px solid theme('colors.border');
+  }
+}

@@ -81,7 +81,17 @@ export const SyllabusUpload: React.FC = () => {
       // Result is already validated by ai.service.ts
       // Generate a course name based on fileName, or just "Manual Input"
       const courseName = fileName ? fileName.replace(/\.[^/.]+$/, "") : "Course"
-      createNewAdventure(courseName, result.worldName, result.nodes)
+      createNewAdventure(courseName, result.worldName, result.nodes, {
+        worldSubtitle: result.worldSubtitle,
+        worldDescription: result.worldDescription,
+        worldElement: result.worldElement,
+        difficulty: result.difficulty,
+        openingNarration: result.openingNarration,
+        theme: result.theme,
+        worldIcon: result.worldIcon,
+        estimatedPlayTime: result.estimatedPlayTime,
+        completionReward: result.completionReward
+      })
       navigate('/map')
     } catch (err: unknown) {
       const e = err instanceof Error ? err : new Error(String(err))
@@ -107,7 +117,7 @@ export const SyllabusUpload: React.FC = () => {
             <FileText className="w-4 h-4" />
             Unggah File
             {activeTab === "file" && (
-              <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary shadow-[0_0_8px_rgba(109,40,217,0.8)]" />
+              <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary shadow-glow-quest" />
             )}
           </button>
           <button
@@ -120,7 +130,7 @@ export const SyllabusUpload: React.FC = () => {
             <Type className="w-4 h-4" />
             Teks Manual
             {activeTab === "text" && (
-              <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary shadow-[0_0_8px_rgba(109,40,217,0.8)]" />
+              <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary shadow-glow-quest" />
             )}
           </button>
         </div>

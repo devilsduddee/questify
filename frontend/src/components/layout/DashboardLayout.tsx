@@ -27,8 +27,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, vari
   // Conditional styles based on variant
   const isQuest = variant === "quest"
   const headerClasses = isQuest
-    ? "h-24 md:h-20 border-b-[3px] border-[#8B5A2B] bg-[#0F172A]/80 backdrop-blur-xl fixed top-0 left-0 right-0 z-50 px-4 md:px-8 flex items-center justify-between shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
-    : "h-24 md:h-20 border-b-[3px] border-[#8B5A2B] bg-[#0F172A]/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 px-4 md:px-8 flex items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all duration-300"
+    ? "h-24 md:h-20 border-b-[3px] border-secondary bg-background/80 backdrop-blur-xl fixed top-0 left-0 right-0 z-50 px-4 md:px-8 flex items-center justify-between shadow-panel"
+    : "h-24 md:h-20 border-b-[3px] border-secondary bg-background/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 px-4 md:px-8 flex items-center justify-between shadow-panel transition-all transition-screen"
 
   return (
     <div className="min-h-screen bg-[#0F172A] text-foreground flex flex-col font-sans overflow-x-hidden">
@@ -40,7 +40,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, vari
         <div className="flex items-center gap-3 w-1/4">
           <motion.div whileHover={{ scale: 1.05 }} className="cursor-pointer">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-12 h-12 flex items-center justify-center shadow-[0_0_12px_rgba(109,40,217,0.5)] bg-black/50 rounded overflow-hidden border border-primary/50">
+              <div className="w-12 h-12 flex items-center justify-center shadow-glow-quest bg-black/50 rounded overflow-hidden border border-primary/50">
                 <img src={questifyLogo} alt="Questify Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-heading font-bold text-xl tracking-wider text-glow text-secondary hidden lg:block">

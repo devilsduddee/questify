@@ -9,10 +9,10 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden relative",
-      variant === "default" && "rpg-frame-inset border-border/50",
-      variant === "scroll" && "bg-[#2D1B13] border-[#8B5A2B] box-glow-gold rounded-sm rpg-frame-double",
-      variant === "boss" && "border-destructive bg-destructive/10 glow-purple rpg-frame-double",
+      "rounded-xl border bg-card text-card-foreground overflow-hidden relative",
+      variant === "default" && "pixel-borders shadow-card border-border",
+      variant === "scroll" && "bg-[#2D1B13] border-secondary shadow-glow-achievement pixel-borders",
+      variant === "boss" && "border-destructive bg-destructive/10 shadow-glow-boss pixel-borders",
       className
     )}
     {...props}
@@ -46,7 +46,7 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    className={cn("flex flex-col space-y-1.5 p-md md:p-lg", className)}
     {...props}
   />
 ))
@@ -59,7 +59,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-2xl font-semibold leading-none tracking-tight font-heading text-secondary text-glow",
+      "text-title-card font-semibold leading-none tracking-tight font-heading text-secondary text-glow",
       className
     )}
     {...props}
@@ -83,7 +83,7 @@ const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+  <div ref={ref} className={cn("p-md md:p-lg pt-0 md:pt-0", className)} {...props} />
 ))
 CardContent.displayName = "CardContent"
 

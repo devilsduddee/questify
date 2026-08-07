@@ -26,7 +26,7 @@ export const LoreMasteryPanel: React.FC<LoreMasteryPanelProps> = ({ isOpen, onCl
           </div>
           
           <div className="mb-12 text-center relative z-10">
-            <div className="inline-flex items-center gap-1 mb-2 px-4 py-1 bg-[#2a1700] text-[#ffddb8] shadow-[0_0_15px_#ee9800]">
+            <div className="inline-flex items-center gap-1 mb-2 px-4 py-1 bg-[#2a1700] text-[#ffddb8] shadow-glow-achievement">
               <span className="material-symbols-outlined text-[16px]">menu_book</span>
               <span className="font-pixel text-[12px] uppercase">Penguasaan Lore</span>
             </div>
@@ -69,11 +69,11 @@ export const LoreMasteryPanel: React.FC<LoreMasteryPanelProps> = ({ isOpen, onCl
               {/* Card 1 */}
               <div className="group h-64 w-full" style={{ perspective: '1000px' }}>
                 <div className="relative h-full w-full transition-transform duration-700 cursor-pointer" style={{ transformStyle: 'preserve-3d' }}>
-                  <div className="absolute inset-0 bg-[#2a1700] p-4 shadow-[0_0_10px_rgba(101,62,0,0.2)] flex flex-col items-center justify-center border border-[#ffb95f]/20 group-hover:opacity-0 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-[#2a1700] p-4 shadow-panel flex flex-col items-center justify-center border border-[#ffb95f]/20 group-hover:opacity-0 transition-hover">
                     <span className="material-symbols-outlined text-[#ffb95f] text-4xl mb-2">bolt</span>
                     <h3 className="font-heading text-2xl text-[#ffddb8] text-center">Saluran Aether</h3>
                   </div>
-                  <div className="absolute inset-0 bg-[#222a3d] p-4 shadow-[0_0_15px_#6d28d9] flex flex-col items-center justify-center text-center border-2 border-[#d3bbff]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-[#222a3d] p-4 shadow-glow-quest flex flex-col items-center justify-center text-center border-2 border-[#d3bbff]/40 opacity-0 group-hover:opacity-100 transition-hover">
                     <p className="font-sans text-base text-[#ccc3d7]">
                       Silinder kristal yang digunakan untuk menyalurkan energi magis mentah dari garis ley ke dalam jaringan mantra lokal. Sangat tidak stabil jika retak.
                     </p>
@@ -84,11 +84,11 @@ export const LoreMasteryPanel: React.FC<LoreMasteryPanelProps> = ({ isOpen, onCl
               {/* Card 2 */}
               <div className="group h-64 w-full" style={{ perspective: '1000px' }}>
                 <div className="relative h-full w-full transition-transform duration-700 cursor-pointer" style={{ transformStyle: 'preserve-3d' }}>
-                  <div className="absolute inset-0 bg-[#2a1700] p-4 shadow-[0_0_10px_rgba(101,62,0,0.2)] flex flex-col items-center justify-center border border-[#ffb95f]/20 group-hover:opacity-0 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-[#2a1700] p-4 shadow-panel flex flex-col items-center justify-center border border-[#ffb95f]/20 group-hover:opacity-0 transition-hover">
                     <span className="material-symbols-outlined text-[#ffb95f] text-4xl mb-2">local_fire_department</span>
                     <h3 className="font-heading text-2xl text-[#ffddb8] text-center">Inti Ignis</h3>
                   </div>
-                  <div className="absolute inset-0 bg-[#222a3d] p-4 shadow-[0_0_15px_#6d28d9] flex flex-col items-center justify-center text-center border-2 border-[#d3bbff]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-[#222a3d] p-4 shadow-glow-quest flex flex-col items-center justify-center text-center border-2 border-[#d3bbff]/40 opacity-0 group-hover:opacity-100 transition-hover">
                     <p className="font-sans text-base text-[#ccc3d7]">
                       Jantung yang masih menyala dari golem pandai besi kuno. Memberikan panas abadi dan dapat melelehkan logam berpesona tingkat rendah.
                     </p>
@@ -99,11 +99,11 @@ export const LoreMasteryPanel: React.FC<LoreMasteryPanelProps> = ({ isOpen, onCl
               {/* Card 3 */}
               <div className="group h-64 w-full" style={{ perspective: '1000px' }}>
                 <div className="relative h-full w-full transition-transform duration-700 cursor-pointer" style={{ transformStyle: 'preserve-3d' }}>
-                  <div className="absolute inset-0 bg-[#2a1700] p-4 shadow-[0_0_10px_rgba(101,62,0,0.2)] flex flex-col items-center justify-center border border-[#ffb95f]/20 group-hover:opacity-0 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-[#2a1700] p-4 shadow-panel flex flex-col items-center justify-center border border-[#ffb95f]/20 group-hover:opacity-0 transition-hover">
                     <span className="material-symbols-outlined text-[#ffb95f] text-4xl mb-2">visibility</span>
                     <h3 className="font-heading text-2xl text-[#ffddb8] text-center">Lensa Oracle</h3>
                   </div>
-                  <div className="absolute inset-0 bg-[#222a3d] p-4 shadow-[0_0_15px_#6d28d9] flex flex-col items-center justify-center text-center border-2 border-[#d3bbff]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-[#222a3d] p-4 shadow-glow-quest flex flex-col items-center justify-center text-center border-2 border-[#d3bbff]/40 opacity-0 group-hover:opacity-100 transition-hover">
                     <p className="font-sans text-base text-[#ccc3d7]">
                       Cakram kaca yang dipoles yang mengungkapkan ilusi tersembunyi dan tulisan tak terlihat ketika diangkat ke cahaya bulan.
                     </p>
@@ -114,11 +114,11 @@ export const LoreMasteryPanel: React.FC<LoreMasteryPanelProps> = ({ isOpen, onCl
               {/* Card 4 */}
               <div className="group h-64 w-full" style={{ perspective: '1000px' }}>
                 <div className="relative h-full w-full transition-transform duration-700 cursor-pointer" style={{ transformStyle: 'preserve-3d' }}>
-                  <div className="absolute inset-0 bg-[#2a1700] p-4 shadow-[0_0_10px_rgba(101,62,0,0.2)] flex flex-col items-center justify-center border border-[#ffb95f]/20 group-hover:opacity-0 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-[#2a1700] p-4 shadow-panel flex flex-col items-center justify-center border border-[#ffb95f]/20 group-hover:opacity-0 transition-hover">
                     <span className="material-symbols-outlined text-[#ffb95f] text-4xl mb-2">book</span>
                     <h3 className="font-heading text-2xl text-[#ffddb8] text-center">Pecahan Codex</h3>
                   </div>
-                  <div className="absolute inset-0 bg-[#222a3d] p-4 shadow-[0_0_15px_#6d28d9] flex flex-col items-center justify-center text-center border-2 border-[#d3bbff]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-[#222a3d] p-4 shadow-glow-quest flex flex-col items-center justify-center text-center border-2 border-[#d3bbff]/40 opacity-0 group-hover:opacity-100 transition-hover">
                     <p className="font-sans text-base text-[#ccc3d7]">
                       Halaman yang robek dari Master Grimoire. Teksnya terus-menerus mengubah bahasa sampai diikat oleh mantra stabilisasi.
                     </p>
@@ -131,7 +131,7 @@ export const LoreMasteryPanel: React.FC<LoreMasteryPanelProps> = ({ isOpen, onCl
           
           <div className="mt-12 flex justify-center pb-12 relative z-10">
             <button 
-              className="bg-[#d3bbff] text-[#3f008d] px-12 py-4 font-pixel text-[12px] uppercase tracking-widest shadow-[inset_0_0_0_2px_rgba(255,255,255,0.2)] hover:shadow-[0_0_20px_#d3bbff] hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 group"
+              className="bg-[#d3bbff] text-[#3f008d] px-12 py-4 font-pixel text-[12px] uppercase tracking-widest shadow-[inset_0_0_0_2px_rgba(255,255,255,0.2)] hover:shadow-glow-quest hover:-translate-y-1 transition-hover flex items-center gap-2 group"
               onClick={onClose}
             >
               Selesaikan Sesi Belajar

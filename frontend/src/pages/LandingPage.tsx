@@ -33,7 +33,7 @@ export const LandingPage: React.FC = () => {
         {/* Abstract Hero Image / Map Representation in Background */}
         <div className="absolute inset-0 z-0 flex items-center justify-center opacity-10 pointer-events-none">
           <div className="relative aspect-square w-full max-w-3xl">
-            <div className="absolute inset-0 bg-card rounded-full border-4 border-primary/30 box-glow-gold overflow-hidden animate-pulse-glow">
+            <div className="absolute inset-0 bg-card rounded-full border-4 border-primary/30 shadow-glow-achievement overflow-hidden animate-pulse-glow">
               <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-background to-background" />
             </div>
           </div>
@@ -41,7 +41,7 @@ export const LandingPage: React.FC = () => {
 
         <div className="relative z-10 flex flex-col items-center w-full max-w-md px-4">
           <FadeIn className="flex flex-col items-center mb-16">
-            <Sword className="w-16 h-16 text-secondary mb-4 drop-shadow-[0_0_15px_rgba(245,158,11,0.8)]" />
+            <Sword className="w-16 h-16 text-secondary mb-4 drop-shadow-md" />
             <h1 className="font-heading text-6xl text-glow text-secondary tracking-widest font-bold text-center">QUESTIFY</h1>
             <p className="font-pixel text-muted-foreground text-sm mt-4 tracking-widest uppercase">The Kingdom of Knowledge</p>
           </FadeIn>
@@ -50,7 +50,7 @@ export const LandingPage: React.FC = () => {
             <MotionButton 
               size="lg" 
               variant="default" 
-              className="w-full font-pixel text-lg py-8 group relative overflow-hidden bg-[#1E293B] border-2 border-primary hover:bg-primary/20 hover:border-primary shadow-[0_0_15px_rgba(109,40,217,0.4)] hover:shadow-[0_0_25px_rgba(109,40,217,0.6)] transition-all"
+              className="w-full font-pixel text-lg py-8 group relative overflow-hidden bg-[#1E293B] border-[3px] border-primary hover:bg-primary/20 hover:border-primary shadow-glow-quest hover:shadow-glow-quest transition-hover"
               onClick={() => navigate('/map')}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent group-hover:translate-x-full transition-transform duration-1000 -translate-x-full" />
@@ -146,10 +146,10 @@ export const LandingPage: React.FC = () => {
           </div>
           <div className="flex-1 w-full max-w-lg relative">
             <FadeIn>
-              <div className="relative w-full aspect-[4/3] rounded-2xl backdrop-blur-md bg-slate-900/60 border-2 border-amber-500/40 shadow-[0_0_25px_rgba(168,85,247,0.3)] overflow-hidden flex items-center justify-center p-8">
+              <div className="relative w-full aspect-[4/3] rounded-2xl backdrop-blur-md bg-slate-900/60 border-[3px] border-secondary/40 shadow-glow-quest overflow-hidden flex items-center justify-center p-xl">
                 
                 {/* Floating Badge */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-[#1a0f2e] border border-[#d3bbff]/50 px-4 py-1 rounded shadow-[0_0_10px_#6d28d9] z-20">
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-[#1a0f2e] border border-primary/50 px-4 py-1 rounded shadow-glow-quest z-20">
                   <span className="font-pixel text-[10px] tracking-widest text-[#d3bbff] whitespace-nowrap">QUEST MAP PREVIEW</span>
                 </div>
 
@@ -164,15 +164,15 @@ export const LandingPage: React.FC = () => {
                   </svg>
 
                   {/* Nodes */}
-                  <div className="absolute top-[70%] left-[70%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-[0_0_15px_#F59E0B] transition-all duration-300 z-10 cursor-pointer">
+                  <div className="absolute top-[70%] left-[70%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-md transition-hover z-10 cursor-pointer">
                     <QuestNode state="completed" label="Bab 1" />
                   </div>
                   
-                  <div className="absolute top-[60%] left-[30%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-[0_0_15px_#F59E0B] transition-all duration-300 z-10 cursor-pointer">
+                  <div className="absolute top-[60%] left-[30%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-md transition-hover z-10 cursor-pointer">
                     <QuestNode state="available" label="Bab 2" />
                   </div>
 
-                  <div className="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-[0_0_20px_#EF4444] transition-all duration-300 z-10 cursor-pointer">
+                  <div className="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-md transition-hover z-10 cursor-pointer">
                     <QuestNode state="boss" label="Ujian Akhir" className="scale-125" />
                   </div>
                 </div>
@@ -228,7 +228,7 @@ export const LandingPage: React.FC = () => {
               { step: "3", title: "Mulai Petualangan", desc: "Mulai belajar, kalahkan bos ujian, dan klaim hadiahmu!" }
             ].map((item, idx) => (
               <ScaleIn key={idx} className="relative z-10 flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-full bg-background border-4 border-secondary flex items-center justify-center font-pixel text-xl mb-6 box-glow-gold text-secondary">
+                <div className="w-16 h-16 rounded-full bg-background border-4 border-secondary flex items-center justify-center font-pixel text-xl mb-6 shadow-glow-achievement text-secondary">
                   {item.step}
                 </div>
                 <h3 className="text-2xl font-heading font-bold mb-2">{item.title}</h3>

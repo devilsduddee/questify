@@ -6,17 +6,17 @@ import { motion, HTMLMotionProps } from "framer-motion"
 import { cn } from "@/utils/cn"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 sound-hover sound-click hover:brightness-110 active:scale-[0.97]",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 sound-hover sound-click hover:brightness-110 active:scale-[0.97]",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 box-glow pixel-emboss border border-primary/50",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 pixel-emboss border border-destructive/50",
-        outline: "border-2 border-input bg-background hover:bg-accent hover:text-accent-foreground pixel-emboss",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 box-glow-gold pixel-emboss border border-secondary/50",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        pixel: "bg-primary text-white font-pixel text-xs pixel-border hover:bg-primary/90 pixel-emboss",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 pixel-borders shadow-glow-quest shadow-button",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 pixel-borders shadow-glow-boss shadow-button",
+        outline: "border-2 border-input bg-background hover:bg-accent hover:text-accent-foreground pixel-borders shadow-button",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 pixel-borders shadow-glow-achievement shadow-button",
+        ghost: "hover:bg-accent hover:text-accent-foreground transition-hover",
+        link: "text-primary underline-offset-4 hover:underline transition-hover",
+        pixel: "bg-primary text-white font-pixel text-xs pixel-borders hover:bg-primary/90 shadow-button",
       },
       size: {
         default: "h-10 px-4 py-2",

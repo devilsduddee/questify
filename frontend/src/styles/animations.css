@@ -1,0 +1,18 @@
+/* src/styles/animations.css */
+@layer utilities {
+  .transition-click {
+    transition-duration: var(--duration-click);
+  }
+  .transition-hover {
+    transition-duration: var(--duration-hover);
+  }
+  .transition-modal {
+    transition-duration: var(--duration-modal);
+  }
+  .transition-toast {
+    transition-duration: var(--duration-toast);
+  }
+  .transition-screen {
+    transition-duration: var(--duration-screen);
+  }
+}

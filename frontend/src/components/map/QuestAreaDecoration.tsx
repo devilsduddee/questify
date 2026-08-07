@@ -28,7 +28,7 @@ export const QuestAreaDecoration: React.FC<QuestAreaDecorationProps> = ({ childr
 
   // Base colors
   const pathColor = isCompleted ? "stroke-secondary" : isAvailable ? "stroke-primary" : "stroke-slate-700"
-  const dropShadow = isCompleted ? "drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]" : isAvailable ? "drop-shadow-[0_0_8px_rgba(109,40,217,0.8)]" : ""
+  const dropShadow = isCompleted ? "drop-shadow-glow-achievement" : isAvailable ? "drop-shadow-glow-quest" : ""
 
   return (
     <div className="relative w-full flex items-center justify-center">
@@ -61,8 +61,8 @@ export const QuestAreaDecoration: React.FC<QuestAreaDecorationProps> = ({ childr
           animate={{ rotate: 360 }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         >
-          <div className={`absolute top-0 left-1/2 w-1 h-1 rounded-full ${isCompleted ? 'bg-secondary' : 'bg-primary'} shadow-[0_0_5px_currentColor]`} />
-          <div className={`absolute bottom-0 right-1/4 w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-secondary' : 'bg-primary'} shadow-[0_0_5px_currentColor]`} />
+          <div className={`absolute top-0 left-1/2 w-1 h-1 rounded-full ${isCompleted ? 'bg-secondary' : 'bg-primary'} shadow-glow-achievement`} />
+          <div className={`absolute bottom-0 right-1/4 w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-secondary' : 'bg-primary'} shadow-glow-achievement`} />
         </motion.div>
       )}
 

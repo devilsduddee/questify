@@ -1,0 +1,22 @@
+/* src/styles/utilities.css */
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 12px;
+    background-color: theme('colors.background-deep');
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: theme('colors.primary.DEFAULT');
+    border: 2px solid theme('colors.background-deep');
+    border-radius: 0px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: theme('colors.secondary.DEFAULT');
+  }
+
+  /* Spacing utilities for custom tokens if needed */
+  .p-xs { padding: var(--spacing-xs); }
+  .p-sm { padding: var(--spacing-sm); }
+  .p-md { padding: var(--spacing-md); }
+  .p-lg { padding: var(--spacing-lg); }
+  .p-xl { padding: var(--spacing-xl); }
+}

@@ -9,6 +9,8 @@ import { MapBackground } from "@/components/map/MapBackground"
 import { MapPath } from "@/components/map/MapPath"
 import { QuestAreaDecoration } from "@/components/map/QuestAreaDecoration"
 import { LoreMasteryPanel } from "@/components/map/LoreMasteryPanel"
+import { WorldBanner } from "@/components/map/WorldBanner"
+import { IntroModal } from "@/components/map/IntroModal"
 
 export const AdventureMap: React.FC = () => {
   const [isLoreOpen, setIsLoreOpen] = useState(false)
@@ -31,20 +33,7 @@ export const AdventureMap: React.FC = () => {
 
         <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center pb-32 pt-8">
           
-          <div className="text-center mb-12 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-glow text-secondary mb-2 tracking-wider">
-              {worldName}
-            </h1>
-            <p className="text-muted-foreground font-sans font-medium text-lg shadow-black drop-shadow-md mb-6">
-              Selesaikan semua node untuk menantang Bos Akhir!
-            </p>
-            <button 
-              onClick={() => setIsLoreOpen(true)}
-              className="inline-flex items-center gap-2 px-6 py-2 bg-background-deep border-2 border-secondary text-secondary shadow-[0_0_15px_#ee9800] hover:bg-secondary/20 transition-colors pixel-borders glow-gold font-pixel text-sm uppercase"
-            >
-              📖 Lore Mastery
-            </button>
-          </div>
+          <WorldBanner onOpenLore={() => setIsLoreOpen(true)} />
           
           {/* Winding path container */}
           <div className="relative flex flex-col items-center w-full min-h-[500px]">
@@ -87,7 +76,7 @@ export const AdventureMap: React.FC = () => {
       </div>
 
       {/* Side Mission Tracker (Desktop only) */}
-      <div className="fixed right-0 lg:right-6 top-24 h-[calc(100vh-7rem)] z-20 hidden lg:flex w-80 bg-[#0F172A]/90 backdrop-blur-md border border-border/50 rounded-xl p-6 flex-col shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+      <div className="fixed right-0 lg:right-6 top-24 h-[calc(100vh-7rem)] z-20 hidden lg:flex w-80 bg-background/90 backdrop-blur-md border-[3px] border-border/50 rounded-xl p-lg flex-col shadow-panel pixel-borders">
         <h3 className="font-heading text-xl text-secondary mb-6 text-glow border-b border-border/50 pb-4">Active Quest</h3>
         
         {activeNode ? (
@@ -136,6 +125,7 @@ export const AdventureMap: React.FC = () => {
       </div>
 
       <LoreMasteryPanel isOpen={isLoreOpen} onClose={() => setIsLoreOpen(false)} />
+      <IntroModal />
     </div>
   )
 }

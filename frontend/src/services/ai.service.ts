@@ -124,11 +124,30 @@ interface QuestNodeData {
   description: string
   difficulty: "easy" | "medium" | "hard"
   isBoss: boolean
+  chapterTheme?: string
+  boss?: {
+    name: string
+    description: string
+  }
 }
 
 export interface QuestMap {
-  nodes: QuestNodeData[]
   worldName: string
+  worldSubtitle?: string
+  worldDescription?: string
+  worldElement?: string
+  difficulty?: string
+  openingNarration?: string
+  theme?: {
+    id: string
+    palette: string
+    terrain: string
+    atmosphere: string
+  }
+  worldIcon?: string
+  estimatedPlayTime?: string
+  completionReward?: string
+  nodes: QuestNodeData[]
 }
 
 /**
@@ -147,13 +166,40 @@ ${syllabusText.substring(0, 5000)}
 Output strictly in the following JSON format:
 {
   "worldName": "Nama Dunia (e.g. Hutan HTML, Gua Python)",
+  "worldSubtitle": "Subjudul dunia yang menarik",
+  "worldDescription": "Satu kalimat ringkas tentang dunia ini",
+  "theme": {
+    "id": "contoh: dark-forest",
+    "palette": "contoh: dark-green",
+    "terrain": "contoh: forest",
+    "atmosphere": "contoh: spooky"
+  },
+  "worldElement": "Elemen utama (e.g. Api, Es, Angin)",
+  "difficulty": "Tingkat kesulitan (e.g. Beginner, Veteran)",
+  "openingNarration": "Satu kalimat narasi pembuka yang sangat epik untuk modal intro",
+  "worldIcon": "Emoji tunggal yang melambangkan dunia (e.g. 🌲)",
+  "estimatedPlayTime": "Estimasi waktu (e.g. 2 Jam)",
+  "completionReward": "Hadiah penyelesaian (e.g. Scroll of Mastery)",
   "nodes": [
     {
       "id": "1",
       "title": "Nama Quest (e.g. Pengenalan Dasar)",
       "description": "Deskripsi quest ini",
       "difficulty": "easy" | "medium" | "hard",
-      "isBoss": boolean
+      "isBoss": false,
+      "chapterTheme": "Tema area untuk quest ini"
+    },
+    {
+      "id": "2",
+      "title": "...",
+      "description": "...",
+      "difficulty": "hard",
+      "isBoss": true,
+      "chapterTheme": "Markas Bos Akhir",
+      "boss": {
+        "name": "Nama bos keren (e.g. Lord Syntax)",
+        "description": "Deskripsi singkat bos ini"
+      }
     }
   ]
 }`

@@ -28,9 +28,9 @@ export const AdventureListPage: React.FC = () => {
     <div className="min-h-screen bg-background relative selection:bg-primary/30 font-sans">
       
       {/* Navbar Minimalist */}
-      <nav className="h-20 border-b border-secondary/20 bg-[#0F172A]/80 backdrop-blur-md px-4 md:px-8 flex items-center shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+      <nav className="h-20 border-b border-secondary/20 bg-background/80 backdrop-blur-md px-4 md:px-8 flex items-center shadow-panel">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-12 h-12 flex items-center justify-center shadow-[0_0_12px_rgba(109,40,217,0.5)] bg-black/50 rounded overflow-hidden border border-primary/50">
+          <div className="w-12 h-12 flex items-center justify-center shadow-glow-quest bg-black/50 rounded overflow-hidden border border-primary/50">
             <img src={questifyLogo} alt="Questify Logo" className="w-full h-full object-cover" />
           </div>
           <span className="font-heading font-bold text-xl tracking-wider text-glow text-secondary hidden lg:block">
@@ -66,7 +66,7 @@ export const AdventureListPage: React.FC = () => {
               
               return (
                 <SlideUp key={adv.id} style={{ transitionDelay: `${idx * 100}ms` }}>
-                  <Card className={`relative flex flex-col h-full overflow-hidden transition-all duration-300 hover:scale-[1.02] ${isSelected ? 'border-primary shadow-[0_0_20px_rgba(109,40,217,0.3)] bg-primary/5' : 'border-border/50 bg-card/80'}`}>
+                  <Card className={`relative flex flex-col h-full overflow-hidden transition-all transition-hover hover:scale-[1.02] ${isSelected ? 'border-primary shadow-glow-quest bg-primary/5' : 'border-border/50 bg-card/80'}`}>
                     
                     {isSelected && (
                       <div className="absolute top-0 right-0 bg-primary text-white text-[10px] font-pixel px-3 py-1 rounded-bl-lg">
