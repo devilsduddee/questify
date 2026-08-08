@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 // usePlayerStore removed
 import { useAdventureStore } from "@/store/useAdventureStore"
 import { CharacterWidget } from "@/components/layout/CharacterWidget"
-import { XpBar } from "@/components/common/XpBar"
+
 import questifyLogo from "@/assets/questify-q-logo.png"
 import mageAvatar from "@/assets/mage-avatar.png"
 

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import ReactMarkdown from 'react-markdown'
-import { ChevronLeft, BookOpen, Star, ArrowRight, ArrowLeft } from "lucide-react"
+import { BookOpen, Star, ArrowRight, ArrowLeft } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout"
 import { useAdventureStore } from "@/store/useAdventureStore"
 import { generateSummary, LearningSummary } from "@/services/ai.service"
 import { Card, CardContent } from "@/components/ui/card"
-import { Button, MotionButton } from "@/components/ui/button"
+import { MotionButton } from "@/components/ui/button"
 import { SlideUp, ScaleIn } from "@/components/common/AnimationWrapper"
 import { Flashcard } from "@/components/common/Flashcard"
 // removed ProgressBar
