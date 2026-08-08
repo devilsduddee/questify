@@ -1,7 +1,8 @@
-import React from "react"
+import React, { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import landingBgImg from "@/assets/landing-bg.png"
-import { Target, Trophy, Play, Wand2, Sword, LogOut } from "lucide-react"
+import { Target, Trophy, Play, Wand2, Sword, LogOut, Menu, X } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 import { MotionButton } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
@@ -18,6 +19,7 @@ export const LandingPage: React.FC = () => {
   const { session, isCloudLoading } = useAuthStore()
   const adventures = useAdventureStore(state => state.adventures)
   const hasAdventures = adventures.length > 0
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -105,17 +107,17 @@ export const LandingPage: React.FC = () => {
                 <MotionButton 
                   size="lg" 
                   variant={hasAdventures ? "outline" : "default"} 
-                  className={`w-full text-xs md:text-base px-6 py-4 font-pixel transition-all group tracking-wider ${
+                  className={`w-full whitespace-normal h-auto text-[10px] sm:text-xs md:text-sm px-4 py-3 md:px-6 md:py-4 font-pixel transition-all group tracking-wider ${
                     hasAdventures 
                       ? "bg-card/80 hover:bg-success/10 hover:border-success/50 hover:text-success" 
                       : "bg-[#1E293B] border-[3px] border-primary hover:bg-primary/20 hover:border-primary shadow-glow-quest"
                   }`}
                 >
-                  <span className={`material-symbols-outlined ${hasAdventures ? "text-amber-400" : "text-secondary"} group-hover:scale-110 transition-transform mr-2 text-base shrink-0`}>auto_awesome</span> 
+                  <span className={`material-symbols-outlined ${hasAdventures ? "text-amber-400" : "text-secondary"} group-hover:scale-110 transition-transform mr-2 text-sm md:text-base shrink-0`}>auto_awesome</span> 
                   {hasAdventures ? "Petualangan Baru" : "Buat Petualangan Pertama"}
                 </MotionButton>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-4xl bg-card border-secondary/50 max-h-[90vh] overflow-y-auto">
+              <DialogContent className="border-amber-500/40">
                 <DialogHeader>
                   <DialogTitle className="font-heading text-2xl text-secondary text-glow">Mulai Petualangan Baru</DialogTitle>
                   <DialogDescription className="font-sans text-muted-foreground">
@@ -132,7 +134,7 @@ export const LandingPage: React.FC = () => {
             <MotionButton 
               size="lg" 
               variant="outline" 
-              className="w-full text-xs md:text-sm px-6 py-4 font-pixel bg-card/80 border-border/30 text-muted-foreground hover:bg-destructive/10 hover:border-destructive/50 hover:text-destructive transition-all group mt-2"
+              className="w-full text-xs md:text-sm px-6 py-4 font-pixel bg-card/80 border-border/30 text-white hover:bg-destructive/10 hover:border-destructive/50 hover:text-destructive transition-all group mt-2"
               onClick={handleLogout}
             >
               <LogOut className="mr-2 w-4 h-4 group-hover:-translate-x-1 transition-transform shrink-0" /> Keluar
@@ -167,15 +169,53 @@ export const LandingPage: React.FC = () => {
       <div className="container mx-auto px-4 py-8 relative z-10">
         
         {/* Navbar */}
-        <nav className="flex justify-between items-center mb-16">
+        <nav className="flex justify-between items-center mb-16 px-4 py-3 bg-card/10 backdrop-blur-sm rounded-2xl border border-border/30 md:bg-transparent md:border-transparent md:backdrop-blur-none relative z-50">
           <div className="flex items-center gap-2">
             <Sword className="w-8 h-8 text-secondary" />
             <span className="font-heading text-2xl text-glow text-secondary tracking-widest font-bold">Questify</span>
           </div>
-          <div className="flex items-center gap-4">
+
+          {/* Desktop Auth Buttons */}
+          <div className="hidden md:flex items-center gap-4">
             <Link to="/login" className="font-pixel text-xs text-muted-foreground hover:text-primary transition-colors">MASUK</Link>
             <Link to="/register" className="font-pixel text-xs bg-primary/20 border border-primary text-primary px-4 py-2 hover:bg-primary/30 transition-colors">DAFTAR</Link>
           </div>
+
+          {/* Mobile Hamburger Toggle */}
+          <button 
+            className="flex items-center justify-center p-2 rounded-xl bg-slate-900/80 border border-amber-500/30 md:hidden"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6 text-amber-400" /> : <Menu className="w-6 h-6 text-amber-400" />}
+          </button>
+
+          {/* Mobile Menu Dropdown */}
+          <AnimatePresence>
+            {isMobileMenuOpen && (
+              <>
+                {/* Overlay to handle click outside */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[998] md:hidden bg-background/50 backdrop-blur-sm"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                />
+                <motion.div 
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="md:hidden absolute top-[110%] right-4 left-4 z-[999] bg-slate-900/95 backdrop-blur-md border border-amber-500/50 rounded-xl p-4 shadow-2xl overflow-hidden"
+                >
+                  <div className="flex flex-col gap-3">
+                    <Link to="/login" className="font-pixel text-sm text-center py-3 border border-border/50 rounded-lg hover:bg-slate-800 transition-colors text-slate-200" onClick={() => setIsMobileMenuOpen(false)}>MASUK</Link>
+                    <Link to="/register" className="font-pixel text-sm text-center py-3 bg-primary/20 border border-primary rounded-lg text-primary hover:bg-primary/30 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>DAFTAR</Link>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </nav>
 
         {/* Hero Section */}
@@ -201,34 +241,34 @@ export const LandingPage: React.FC = () => {
           </div>
           <div className="flex-1 w-full max-w-lg relative">
             <FadeIn>
-              <div className="relative w-full aspect-[4/3] rounded-2xl backdrop-blur-md bg-slate-900/60 border-[3px] border-secondary/40 shadow-glow-quest overflow-hidden flex items-center justify-center p-xl">
+              <div className="w-full max-w-sm mx-auto p-4 sm:p-6 min-h-[320px] flex flex-col justify-between relative overflow-hidden rounded-2xl backdrop-blur-md bg-slate-900/60 border-[3px] border-secondary/40 shadow-glow-quest">
                 
                 {/* Floating Badge */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-[#1a0f2e] border border-primary/50 px-4 py-1 rounded shadow-glow-quest z-20">
-                  <span className="font-pixel text-[10px] tracking-widest text-[#d3bbff] whitespace-nowrap">QUEST MAP PREVIEW</span>
+                <div className="relative mb-4 mx-auto bg-[#1a0f2e] border border-primary/50 px-4 py-1 rounded shadow-glow-quest z-20">
+                  <span className="font-pixel text-[10px] sm:text-xs tracking-widest text-[#d3bbff] whitespace-nowrap">QUEST MAP PREVIEW</span>
                 </div>
 
                 {/* Map Grid Background */}
                 <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
                 
-                <div className="relative w-full h-full">
-                  {/* Connecting Lines */}
-                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
-                    <path d="M 70 70 Q 50 85 30 60" fill="none" stroke="#F59E0B" strokeWidth="1" strokeDasharray="2,2" className="animate-pulse" />
-                    <path d="M 30 60 Q 20 20 50 30" fill="none" stroke="#8B5CF6" strokeWidth="1" strokeDasharray="2,2" className="animate-pulse" style={{ animationDelay: '500ms' }} />
-                  </svg>
+                {/* Connecting Lines */}
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full pointer-events-none z-0">
+                  <path d="M 20 85 C 40 95, 70 75, 80 55" fill="none" stroke="#F59E0B" strokeWidth="2" strokeDasharray="4,4" className="animate-pulse" />
+                  <path d="M 80 55 C 80 35, 70 20, 50 15" fill="none" stroke="#8B5CF6" strokeWidth="2" strokeDasharray="4,4" className="animate-pulse" style={{ animationDelay: '500ms' }} />
+                </svg>
 
+                <div className="flex-1 w-full flex flex-col-reverse justify-between relative z-10 px-4 sm:px-8 pb-2">
                   {/* Nodes */}
-                  <div className="absolute top-[70%] left-[70%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-md transition-hover z-10 cursor-pointer">
-                    <QuestNode state="completed" label="Bab 1" />
+                  <div className="self-start relative hover:-translate-y-2 hover:drop-shadow-md transition-all duration-300 cursor-pointer">
+                    <QuestNode state="completed" label="Bab 1" className="scale-[0.85] sm:scale-100 origin-left" />
                   </div>
                   
-                  <div className="absolute top-[60%] left-[30%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-md transition-hover z-10 cursor-pointer">
-                    <QuestNode state="available" label="Bab 2" />
+                  <div className="self-end relative hover:-translate-y-2 hover:drop-shadow-md transition-all duration-300 cursor-pointer">
+                    <QuestNode state="available" label="Bab 2" className="scale-[0.85] sm:scale-100 origin-right" />
                   </div>
 
-                  <div className="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 hover:-translate-y-2 hover:drop-shadow-md transition-hover z-10 cursor-pointer">
-                    <QuestNode state="boss" label="Ujian Akhir" className="scale-125" />
+                  <div className="self-center relative hover:-translate-y-2 hover:drop-shadow-md transition-all duration-300 cursor-pointer -mt-4">
+                    <QuestNode state="boss" label="Ujian Akhir" className="scale-100 sm:scale-125 origin-top" />
                   </div>
                 </div>
               </div>
@@ -268,10 +308,10 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* How It Works */}
-        <section className="py-24 bg-card/30 rounded-3xl border border-border/50 my-12 px-6">
+        <section className="py-24 bg-slate-950/80 backdrop-blur-md border border-amber-500/30 rounded-2xl p-6 md:p-8 my-12 relative z-10">
           <FadeIn>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-heading font-bold text-glow mb-4">Perjalanan Pahlawan</h2>
+              <h2 className="text-3xl md:text-5xl font-heading font-bold text-glow mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">Perjalanan Pahlawan</h2>
             </div>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
@@ -286,8 +326,8 @@ export const LandingPage: React.FC = () => {
                 <div className="w-16 h-16 rounded-full bg-background border-4 border-secondary flex items-center justify-center font-pixel text-xl mb-6 shadow-glow-achievement text-secondary">
                   {item.step}
                 </div>
-                <h3 className="text-2xl font-heading font-bold mb-2">{item.title}</h3>
-                <p className="text-muted-foreground">{item.desc}</p>
+                <h3 className="text-2xl font-heading font-bold mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] text-slate-100">{item.title}</h3>
+                <p className="text-slate-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">{item.desc}</p>
               </ScaleIn>
             ))}
           </div>

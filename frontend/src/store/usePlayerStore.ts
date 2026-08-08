@@ -5,10 +5,12 @@ import { useAchievementUIStore } from './useAchievementUIStore'
 export interface PlayerState {
   name: string
   role: string | null
+  avatarId: string | null
   globalAchievements: { id: string; unlockedAt: number }[]
   
   setName: (name: string) => void
   setRole: (role: string) => void
+  setAvatarId: (avatarId: string) => void
   unlockGlobalAchievement: (id: string) => void
   resetPlayer: () => void
   loadFromCloud: (cloudData: any) => void
@@ -17,6 +19,7 @@ export interface PlayerState {
 const INITIAL_STATE = {
   name: "Hero",
   role: null,
+  avatarId: null,
   globalAchievements: [],
 }
 
@@ -36,8 +39,10 @@ export const usePlayerStore = create<PlayerState>()((set) => ({
         import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
           cloudSyncService.syncProfile(newState.name, newState.role, newState.globalAchievements)
         })
-        return { role }
+        return newState
       }),
+
+      setAvatarId: (avatarId) => set({ avatarId }),
       
       unlockGlobalAchievement: (id) => {
         let wasUnlocked = false
@@ -65,8 +70,9 @@ export const usePlayerStore = create<PlayerState>()((set) => ({
       resetPlayer: () => set(INITIAL_STATE),
       
       loadFromCloud: (cloudData) => set({
-        name: cloudData.name,
+        name: cloudData.name || "Hero",
         role: cloudData.role || null,
-        globalAchievements: cloudData.globalAchievements
+        avatarId: cloudData.avatarId || null,
+        globalAchievements: cloudData.globalAchievements || [],
       })
     }))

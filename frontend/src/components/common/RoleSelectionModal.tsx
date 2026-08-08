@@ -6,12 +6,12 @@ import { RoleSelection } from './RoleSelection'
 import { MotionButton } from '@/components/ui/button'
 
 export const RoleSelectionModal: React.FC = () => {
-  const { session, isInitialized } = useAuthStore()
+  const { session, isInitialized, isCloudLoading } = useAuthStore()
   const { role, setRole } = usePlayerStore()
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
   
-  // Only show if user is fully logged in, initialized, and role is null
-  const shouldShow = isInitialized && session && role === null
+  // Only show if user is fully logged in, initialized, cloud sync finished, and role is still null
+  const shouldShow = isInitialized && session && !isCloudLoading && role === null
   
   if (!shouldShow) return null
 

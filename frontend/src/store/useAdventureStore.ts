@@ -133,7 +133,7 @@ export const useAdventureStore = create<AdventureState>()(
         }
         
         import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
-          cloudSyncService.syncAdventure(newAdventure)
+          cloudSyncService.syncAdventureImmediate(newAdventure)
         })
       },
 

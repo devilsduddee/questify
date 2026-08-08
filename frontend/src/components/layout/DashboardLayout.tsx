@@ -10,6 +10,7 @@ import { CharacterWidget } from "@/components/layout/CharacterWidget"
 
 import questifyLogo from "@/assets/questify-q-logo.png"
 import mageAvatar from "@/assets/mage-avatar.png"
+import { AVAILABLE_AVATARS } from "@/components/common/AvatarSelection"
 
 interface DashboardLayoutProps {
   children?: React.ReactNode
@@ -20,6 +21,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, vari
   // Player info is now handled by CharacterWidget on desktop
   const activeAdventure = useAdventureStore(state => state.getActive())
   const { xp = 0, level = 1, maxXp = 100, gold = 0, worldName = "Peta Petualangan", nodes = [] } = activeAdventure || {}
+  const { avatarId } = usePlayerStore()
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -117,7 +119,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, vari
                     {/* Top Section: Player Stats */}
                     <div className="flex items-center gap-3 border-b border-purple-500/30 pb-4">
                       <div className="w-12 h-12 rounded-full border-2 border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)] bg-background overflow-hidden shrink-0">
-                        <img src={mageAvatar} alt="Mage Avatar" className="w-full h-full object-cover" />
+                        <img src={AVAILABLE_AVATARS.find(a => a.id === avatarId)?.img || mageAvatar} alt="Hero Avatar" className="w-full h-full object-cover pixelated" />
                       </div>
                       
                       <div className="flex flex-col gap-1.5 w-full">

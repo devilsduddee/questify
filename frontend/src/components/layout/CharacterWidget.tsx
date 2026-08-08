@@ -8,9 +8,10 @@ import { getAllAchievements } from '../../data/achievements';
 
 import { usePlayerStore } from '../../store/usePlayerStore';
 import { getRoleById } from '../../data/roles';
+import { AVAILABLE_AVATARS } from '../common/AvatarSelection';
 
 export const CharacterWidget: React.FC = () => {
-  const { name, role, globalAchievements } = usePlayerStore();
+  const { name, role, avatarId, globalAchievements } = usePlayerStore();
   const adventure = useAdventureStore((state) => state.getActive());
   const [isBookOpen, setIsBookOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -31,13 +32,15 @@ export const CharacterWidget: React.FC = () => {
   const roleDef = getRoleById(role);
 
   const xpPercent = Math.min(100, Math.floor((adventure.xp / adventure.maxXp) * 100));
+  const selectedAvatarImg = AVAILABLE_AVATARS.find(a => a.id === avatarId)?.img || mageAvatar;
+
   return (
     <div className="hidden md:flex items-center gap-2 md:gap-3 bg-slate-900/80 backdrop-blur-md pl-3 pr-5 py-1.5 rounded-xl border border-amber-500/30 shadow-[0_0_15px_rgba(168,85,247,0.2)] hover:shadow-[0_0_25px_rgba(168,85,247,0.4)] transition-all duration-300 group/widget min-w-[220px]">
       
       {/* Avatar Section */}
       <div className="relative shrink-0">
         <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 ring-2 ring-amber-400/80 border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.4)] group-hover/widget:shadow-[0_0_15px_rgba(245,158,11,0.7)] bg-background flex items-center justify-center overflow-hidden transition-all duration-300 transform group-hover/widget:scale-105">
-          <img src={mageAvatar} alt="Mage Avatar" className="w-full h-full object-cover" />
+          <img src={selectedAvatarImg} alt="Hero Avatar" className="w-full h-full object-cover pixelated" />
         </div>
       </div>
 

@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 export interface CloudSyncService {
   syncProfile: (name: string, role: string | null, globalAchievements: any[]) => Promise<void>;
   syncAdventure: (adventure: any) => Promise<void>;
+  syncAdventureImmediate: (adventure: any) => Promise<void>;
   deleteAdventure: (adventureId: string) => Promise<void>;
   fetchCloudAdventures: () => Promise<any[]>;
   fetchCloudProfile: () => Promise<any>;
@@ -93,6 +94,42 @@ export const cloudSyncService: CloudSyncService = {
     }
   }),
 
+  syncAdventureImmediate: async (adventure: any) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const { error } = await supabase
+      .from('adventures')
+      .upsert({
+        id: adventure.id,
+        user_id: user.id,
+        course_name: adventure.courseName,
+        world_name: adventure.worldName,
+        world_subtitle: adventure.worldSubtitle,
+        world_description: adventure.worldDescription,
+        world_element: adventure.worldElement,
+        difficulty: adventure.difficulty,
+        opening_narration: adventure.openingNarration,
+        theme: adventure.theme,
+        world_icon: adventure.worldIcon,
+        estimated_play_time: adventure.estimatedPlayTime,
+        completion_reward: adventure.completionReward,
+        has_seen_intro: adventure.hasSeenIntro,
+        level: adventure.level,
+        xp: adventure.xp,
+        max_xp: adventure.maxXp,
+        gold: adventure.gold,
+        achievements: adventure.achievements,
+        nodes: adventure.nodes,
+        active_node_id: adventure.activeNodeId,
+        last_played_at: new Date(adventure.lastPlayedAt).toISOString()
+      }, { onConflict: 'id' })
+
+    if (error) {
+      console.error('Failed to immediately sync adventure:', error)
+    }
+  },
+
   deleteAdventure: async (adventureId: string) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
@@ -159,15 +196,20 @@ export const cloudSyncService: CloudSyncService = {
       .eq('id', user.id)
       .single()
 
-    if (error) {
+    if (error && error.code !== 'PGRST116') { // Ignore row not found error if we can fallback to metadata
       console.error('Failed to fetch cloud profile:', error)
-      return null
+    }
+
+    let finalName = data?.display_name
+    if (!finalName || finalName === 'Hero') {
+      finalName = user.user_metadata?.display_name || 'Hero'
     }
 
     return {
-      name: data.display_name,
-      role: data.role,
-      globalAchievements: data.global_achievements || []
+      name: finalName,
+      role: data?.role || user.user_metadata?.role || null,
+      avatarId: user.user_metadata?.avatar_id || null,
+      globalAchievements: data?.global_achievements || []
     }
   }
 }

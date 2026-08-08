@@ -188,15 +188,15 @@ export const SyllabusUpload: React.FC = () => {
                     </Button>
                   </div>
                   
-                  <div className="bg-background/80 rounded-md border border-input p-6 h-64 overflow-y-auto custom-scrollbar font-sans text-sm text-foreground/90 whitespace-pre-wrap">
+                  <div className="w-full max-h-48 sm:max-h-60 overflow-y-auto bg-slate-950/80 p-3 rounded-xl border border-slate-700 text-xs text-slate-300 font-mono break-words leading-relaxed custom-scrollbar">
                     {parsedText}
                   </div>
 
-                  <div className="flex justify-center pt-4">
+                  <div className="flex justify-center pt-2">
                     <MotionButton 
                       size="lg" 
                       variant="secondary" 
-                      className="w-full max-w-sm font-heading text-lg"
+                      className="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold flex items-center justify-center text-center whitespace-nowrap overflow-hidden transition-all shadow-lg text-[11px] sm:text-xs md:text-sm font-pixel tracking-wide sticky bottom-0 mt-4"
                       onClick={handleGenerateQuest}
                       disabled={isGenerating}
                     >

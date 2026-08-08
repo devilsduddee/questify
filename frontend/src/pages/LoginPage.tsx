@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { MotionButton } from '@/components/ui/button'
+import { ArrowLeft } from 'lucide-react'
+import authBg from '@/assets/auth-bg.png'
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('')
@@ -29,9 +31,20 @@ export const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden bg-slate-950" style={{ backgroundImage: `url(${authBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-[2px] z-0" />
+
+      {/* Back Button */}
+      <Link to="/" className="fixed top-6 left-6 z-50 p-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-amber-500/40 text-amber-400 transition-all shadow-lg group">
+        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+      </Link>
+
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background z-0 pointer-events-none" />
+      <div className="absolute inset-0 opacity-20 pointer-events-none z-0" style={{ backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+      <div className="absolute top-[20%] left-[20%] w-2 h-2 bg-secondary rounded-full animate-float opacity-50" style={{ animationDelay: "0s" }} />
+      <div className="absolute top-[60%] right-[20%] w-3 h-3 bg-primary rounded-full animate-float opacity-50" style={{ animationDelay: "1s" }} />
+      <div className="absolute bottom-[20%] left-[30%] w-2 h-2 bg-success rounded-full animate-float opacity-50" style={{ animationDelay: "2s" }} />
       
       <div className="z-10 w-full max-w-md bg-card border-[3px] border-secondary shadow-panel pixel-borders p-8 flex flex-col gap-6 relative">
         <div className="text-center">
@@ -51,7 +64,8 @@ export const LoginPage: React.FC = () => {
             <input 
               type="email" 
               required
-              className="bg-background-deep border-2 border-border p-3 font-sans text-foreground focus:outline-none focus:border-primary transition-colors"
+              placeholder="e.g. arthur@hero.com"
+              className="bg-slate-900/90 border-2 border-slate-700 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 text-white rounded-xl px-4 py-3 placeholder:text-slate-500 shadow-inner w-full transition-all"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -62,7 +76,7 @@ export const LoginPage: React.FC = () => {
             <input 
               type="password" 
               required
-              className="bg-background-deep border-2 border-border p-3 font-sans text-foreground focus:outline-none focus:border-primary transition-colors"
+              className="bg-slate-900/90 border-2 border-slate-700 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 text-white rounded-xl px-4 py-3 placeholder:text-slate-500 shadow-inner w-full transition-all"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

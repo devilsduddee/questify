@@ -2,7 +2,7 @@
 // Utilizes OpenRouter API to access Gemini models for generation tasks.
 
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-// Using Gemini 1.5 Flash via OpenRouter for fast, cheap JSON generation
+// Using Llama 3.1 8B Instruct via OpenRouter for fast, free JSON generation
 const DEFAULT_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free"
 
 // Fallback key if not provided (though security.md dictates environment variables)
@@ -35,7 +35,16 @@ async function fetchWithRetry(url: string, options: FetchOptions = {}): Promise<
       clearTimeout(id)
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        let errorMsg = `HTTP error! status: ${response.status}`
+        try {
+          const errorData = await response.clone().json()
+          if (errorData.error && errorData.error.message) {
+            errorMsg = `AI API Error (${response.status}): ${errorData.error.message}`
+          }
+        } catch (e) {
+          // Ignore if it's not JSON
+        }
+        throw new Error(errorMsg)
       }
 
       return response
@@ -75,8 +84,7 @@ async function callOpenRouter(systemPrompt: string, userMessage: string, timeout
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userMessage }
-    ],
-    response_format: { type: "json_object" }
+    ]
   }
 
   const response = await fetchWithRetry(OPENROUTER_API_URL, {
@@ -96,7 +104,8 @@ async function callOpenRouter(systemPrompt: string, userMessage: string, timeout
   const data = await response.json()
 
   if (!data.choices || data.choices.length === 0) {
-    throw new Error("Invalid response from AI service.")
+    console.error("OpenRouter Error Data:", data)
+    throw new Error(`AI Error: ${data.error?.message || "Invalid response format"}`)
   }
 
   let content = data.choices[0].message.content
