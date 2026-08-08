@@ -33,7 +33,10 @@ export const BattlePage: React.FC = () => {
   
   const battle = useBattleStore()
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(() => {
+    if (battle.status === "active" && battle.currentBossId === nodeId) return false
+    return true
+  })
   const [error, setError] = useState<string | null>(null)
   
   // Animation triggers
@@ -43,13 +46,33 @@ export const BattlePage: React.FC = () => {
   // Tracking selected answer for visual feedback before applying damage
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [answerState, setAnswerState] = useState<"correct" | "wrong" | null>(null)
+  
+  // Rotating loading messages
+  const LOADING_MESSAGES = [
+    "AI sedang membaca materi...",
+    "AI sedang menyusun pertanyaan...",
+    "Menyiapkan arena pertarungan...",
+    "Memanggil entitas dari kegelapan..."
+  ]
+  const [loadingMsgIdx, setLoadingMsgIdx] = useState(0)
+
+  useEffect(() => {
+    if (!isLoading) return
+    const interval = setInterval(() => {
+      setLoadingMsgIdx(prev => (prev + 1) % LOADING_MESSAGES.length)
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [isLoading])
 
   const node = nodes.find(n => n.id === nodeId)
 
   useEffect(() => {
     if (!node) return
     
-    if (battle.status === "active" && battle.currentBossId === nodeId) return
+    if (battle.status === "active" && battle.currentBossId === nodeId) {
+      if (isLoading) setIsLoading(false)
+      return
+    }
 
     // LAYER 1: Existing Data Guard
     if ((node as any).quizData) {
@@ -110,11 +133,15 @@ export const BattlePage: React.FC = () => {
         <BattleBackground />
         <div className="flex-1 relative overflow-y-auto w-full pt-24 md:pt-20">
           <div className="min-h-full flex flex-col items-center justify-center p-6 text-center">
-            <AnimatePresence>
-              <ScaleIn>
+            <AnimatePresence mode="wait">
+              <ScaleIn key={loadingMsgIdx}>
                 <Skull className="w-32 h-32 text-destructive mb-8 animate-pulse shadow-glow-boss mx-auto" />
-                <h1 className="font-heading text-5xl text-destructive text-glow mb-4 uppercase tracking-widest">Memanggil Bos...</h1>
-                <p className="font-pixel text-secondary text-sm">Menyiapkan arena pertarungan gelap...</p>
+                <h1 className="font-heading text-4xl md:text-5xl text-destructive text-glow mb-4 uppercase tracking-widest">
+                  Memanggil Penjaga...
+                </h1>
+                <p className="font-pixel text-secondary text-sm h-6 opacity-90 animate-pulse">
+                  {LOADING_MESSAGES[loadingMsgIdx]}
+                </p>
               </ScaleIn>
             </AnimatePresence>
           </div>
