@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom"
 // removed motion
 import { Sword, Trash2, Play, Calendar, Trophy, Coins } from "lucide-react"
 import questifyLogo from "@/assets/questify-q-logo.png"
+import { MapBackground } from "@/components/map/MapBackground"
 
 import { useAdventureStore } from "@/store/useAdventureStore"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
@@ -25,10 +26,11 @@ export const AdventureListPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background relative selection:bg-primary/30 font-sans">
+    <div className="min-h-screen bg-slate-950/90 relative selection:bg-primary/30 font-sans overflow-hidden">
+      <MapBackground />
       
       {/* Navbar Minimalist */}
-      <nav className="h-20 border-b border-secondary/20 bg-background/80 backdrop-blur-md px-4 md:px-8 flex items-center shadow-panel">
+      <nav className="relative z-10 h-20 border-b border-secondary/20 bg-background/80 backdrop-blur-md px-4 md:px-8 flex items-center shadow-panel">
         <Link to="/" className="flex items-center gap-2">
           <div className="w-12 h-12 flex items-center justify-center shadow-glow-quest bg-black/50 rounded overflow-hidden border border-primary/50">
             <img src={questifyLogo} alt="Questify Logo" className="w-full h-full object-cover" />
@@ -39,7 +41,7 @@ export const AdventureListPage: React.FC = () => {
         </Link>
       </nav>
 
-      <div className="container mx-auto px-4 py-12 max-w-5xl">
+      <div className="relative z-10 container mx-auto px-4 py-12 max-w-5xl">
         <FadeIn>
           <div className="mb-12 text-center md:text-left">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-glow mb-4 text-white">Petualanganku</h1>

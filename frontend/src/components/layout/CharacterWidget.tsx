@@ -18,38 +18,55 @@ export const CharacterWidget: React.FC = () => {
   const totalAvailable = getAllAchievements().length;
 
   const xpPercent = Math.min(100, Math.floor((adventure.xp / adventure.maxXp) * 100));
-
   return (
-    <div className="flex items-center gap-4 bg-background-deep p-sm md:p-md border-[3px] border-secondary pixel-borders shadow-glow-achievement">
-      <div className="text-right flex flex-col items-end">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="font-sans text-xs font-bold text-gray-400 uppercase">LVL</span>
-          <span className="font-pixel text-secondary text-sm">{adventure.level}</span>
-        </div>
-        <div className="w-32 h-2 bg-background border border-gray-600 overflow-hidden relative">
-          <div
-            className="h-full bg-secondary shadow-glow-achievement transition-screen"
-            style={{ width: `${xpPercent}%` }}
-          />
-        </div>
-      </div>
-      <div className="relative">
-        <div className="w-10 h-10 rounded-full border-2 border-primary shadow-glow-quest bg-background flex items-center justify-center font-heading font-bold text-xl text-primary overflow-hidden">
+    <div className="hidden md:flex items-center gap-2 md:gap-3 bg-slate-900/80 backdrop-blur-md pl-3 pr-5 py-1.5 rounded-xl border border-amber-500/30 shadow-[0_0_15px_rgba(168,85,247,0.2)] hover:shadow-[0_0_25px_rgba(168,85,247,0.4)] transition-all duration-300 group/widget min-w-[220px]">
+      
+      {/* Avatar Section */}
+      <div className="relative shrink-0">
+        <div className="w-9 h-9 md:w-10 md:h-10 rounded-full border-2 ring-2 ring-amber-400/80 border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.4)] group-hover/widget:shadow-[0_0_15px_rgba(245,158,11,0.7)] bg-background flex items-center justify-center overflow-hidden transition-all duration-300 transform group-hover/widget:scale-105">
           <img src={mageAvatar} alt="Mage Avatar" className="w-full h-full object-cover" />
         </div>
       </div>
-      <div className="flex items-center gap-2 bg-background p-sm border border-secondary/40 shadow-button ml-4">
-        <span className="material-symbols-outlined text-secondary">toll</span>
-        <span className="font-pixel text-secondary text-sm">{adventure.gold.toLocaleString()}</span>
+
+      {/* Stats Section */}
+      <div className="flex flex-col justify-center">
+        {/* Top Row: LVL & EXP */}
+        <div className="flex items-center gap-2 mb-1">
+          <div className="bg-gradient-to-b from-amber-400 to-amber-600 text-[#1a0f2e] text-[9px] font-pixel px-1.5 py-0.5 rounded border border-[#1a0f2e] shadow-sm whitespace-nowrap">
+            LVL {adventure.level}
+          </div>
+          <div className="flex items-center gap-1.5 w-24 md:w-28">
+            <div className="w-full h-2 bg-black/50 rounded-full border border-purple-500/30 overflow-hidden relative shadow-inner">
+              <div
+                className="h-full bg-gradient-to-r from-purple-600 via-purple-400 to-fuchsia-400 shadow-[0_0_8px_#a855f7] transition-all duration-700 ease-out relative"
+                style={{ width: `${xpPercent}%` }}
+              >
+                <div className="absolute top-0 right-0 bottom-0 w-3 bg-white/30 skew-x-[-20deg] animate-[shimmer_2s_infinite]" />
+              </div>
+            </div>
+            <span className="font-pixel text-[8px] text-purple-300 min-w-[35px] text-right whitespace-nowrap">{adventure.xp}/{adventure.maxXp}</span>
+          </div>
+        </div>
+
+        {/* Bottom Row: Currency & Trophies */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 hover:-translate-y-0.5 transition-transform cursor-default">
+            <span className="material-symbols-outlined text-amber-400 text-[12px] drop-shadow-[0_0_4px_rgba(245,158,11,0.8)]">toll</span>
+            <span className="font-pixel text-amber-400 text-[10px] mt-0.5 drop-shadow-md">{adventure.gold.toLocaleString()}</span>
+          </div>
+          
+          <div className="w-[1px] h-2.5 bg-amber-500/30"></div>
+          
+          <button 
+            onClick={() => setIsBookOpen(true)}
+            className="flex items-center gap-1 hover:-translate-y-0.5 transition-transform group"
+            title="Buku Pencapaian"
+          >
+            <Trophy className="w-3 h-3 text-blue-400 group-hover:text-blue-300 drop-shadow-[0_0_4px_rgba(59,130,246,0.6)] transition-all" />
+            <span className="font-pixel text-blue-400 group-hover:text-blue-300 text-[10px] mt-0.5 drop-shadow-md">{totalUnlocked}/{totalAvailable}</span>
+          </button>
+        </div>
       </div>
-      <button 
-        onClick={() => setIsBookOpen(true)}
-        className="flex items-center gap-2 bg-background hover:bg-background-deep p-sm border border-secondary shadow-button hover:shadow-glow-achievement transition-hover ml-2 group"
-        title="Buku Pencapaian"
-      >
-        <Trophy className="w-4 h-4 text-secondary group-hover:scale-110 transition-transform" />
-        <span className="font-pixel text-secondary text-xs mt-1">{totalUnlocked} / {totalAvailable}</span>
-      </button>
 
       <AchievementBook isOpen={isBookOpen} onClose={() => setIsBookOpen(false)} />
     </div>
