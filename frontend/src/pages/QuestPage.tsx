@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import ReactMarkdown from 'react-markdown'
-import { ChevronLeft, BookOpen, Star, ArrowRight } from "lucide-react"
+import { ChevronLeft, BookOpen, Star, ArrowRight, ArrowLeft } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout"
 import { useAdventureStore } from "@/store/useAdventureStore"
@@ -25,6 +26,7 @@ export const QuestPage: React.FC = () => {
   const [summary, setSummary] = useState<LearningSummary | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showVictoryModal, setShowVictoryModal] = useState(false)
 
   const node = nodes.find(n => n.id === id)
 
@@ -74,7 +76,7 @@ export const QuestPage: React.FC = () => {
     completeNode(node.id)
     gainXp(100)
     gainGold(50)
-    navigate('/map')
+    setShowVictoryModal(true)
   }
 
   return (
@@ -84,9 +86,13 @@ export const QuestPage: React.FC = () => {
           
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <Button variant="outline" size="sm" onClick={() => navigate("/map")} className="font-pixel text-xs text-muted-foreground hover:text-foreground">
-              <ChevronLeft className="w-4 h-4 mr-1" /> Peta
-            </Button>
+            <button 
+              onClick={() => navigate("/map")} 
+              className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-amber-500/30 text-amber-400 transition-all flex items-center justify-center shrink-0"
+              title="Kembali ke Peta"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
             <h1 className="text-3xl md:text-4xl font-heading font-bold text-glow text-primary">
               {node?.title || "Misi Tidak Diketahui"}
             </h1>
@@ -156,6 +162,47 @@ export const QuestPage: React.FC = () => {
 
         </div>
       </div>
+
+      {showVictoryModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="w-full max-w-md bg-slate-900 border-2 border-amber-500/50 rounded-2xl p-6 shadow-[0_0_30px_rgba(245,158,11,0.3)] text-center relative overflow-hidden"
+            >
+              <div className="absolute inset-0 translate-x-[-100%] animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none" />
+
+              <h2 className="font-heading text-2xl text-amber-400 mb-2 drop-shadow-md">
+                BERHASIL MENYELESAIKAN<br/>
+                <span className="text-white">{node.title}</span>
+              </h2>
+              <p className="text-slate-300 font-sans text-sm mb-6">
+                Selamat! Anda telah menguasai materi ini dan mendapatkan hadiah berikut:
+              </p>
+
+              <div className="flex items-center justify-center gap-4 mb-8">
+                <div className="flex flex-col items-center bg-slate-800/50 border border-slate-700 rounded-xl p-3 w-28 shadow-inner">
+                  <span className="material-symbols-outlined text-amber-400 text-3xl mb-1 drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]">toll</span>
+                  <span className="font-pixel text-amber-400 text-sm drop-shadow-md">+50 Gold</span>
+                </div>
+                <div className="flex flex-col items-center bg-slate-800/50 border border-slate-700 rounded-xl p-3 w-28 shadow-inner">
+                  <Star className="text-purple-400 w-8 h-8 mb-1 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+                  <span className="font-pixel text-purple-400 text-sm drop-shadow-md">+100 EXP</span>
+                </div>
+              </div>
+
+              <MotionButton
+                onClick={() => navigate('/map')}
+                className="w-full font-heading text-lg py-6 shadow-glow-quest"
+              >
+                Lanjutkan Petualangan
+              </MotionButton>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
+
     </DashboardLayout>
   )
 }

@@ -46,24 +46,24 @@ export const LandingPage: React.FC = () => {
             <p className="font-pixel text-muted-foreground text-sm mt-4 tracking-widest uppercase">The Kingdom of Knowledge</p>
           </FadeIn>
 
-          <SlideUp className="w-full flex flex-col gap-4">
+          <SlideUp className="flex flex-col items-center justify-center gap-3 md:gap-4 w-full">
             <MotionButton 
               size="lg" 
               variant="default" 
-              className="w-full font-pixel text-lg py-8 group relative overflow-hidden bg-[#1E293B] border-[3px] border-primary hover:bg-primary/20 hover:border-primary shadow-glow-quest hover:shadow-glow-quest transition-hover"
+              className="w-auto inline-flex items-center justify-center min-w-[280px] md:min-w-[320px] text-[10px] sm:text-xs md:text-base px-6 py-3.5 mx-auto font-pixel group relative overflow-hidden bg-[#1E293B] border-[3px] border-primary hover:bg-primary/20 hover:border-primary shadow-glow-quest hover:shadow-glow-quest transition-hover whitespace-nowrap tracking-wider"
               onClick={() => navigate('/map')}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent group-hover:translate-x-full transition-transform duration-1000 -translate-x-full" />
-              <Play className="mr-3 w-5 h-5 group-hover:animate-pulse text-secondary" /> Lanjutkan Petualangan
+              <Play className="mr-2 w-4 h-4 md:w-5 md:h-5 group-hover:animate-pulse text-secondary shrink-0" /> Lanjutkan Petualangan
             </MotionButton>
             
             <MotionButton 
               size="lg" 
               variant="outline" 
-              className="w-full font-pixel text-base py-6 bg-card/80 border-border hover:bg-secondary/10 hover:border-secondary/50 hover:text-secondary transition-all group flex items-center justify-center"
+              className="w-auto inline-flex items-center justify-center min-w-[280px] md:min-w-[320px] text-[10px] sm:text-xs md:text-base px-6 py-3.5 mx-auto font-pixel bg-card/80 border-border hover:bg-secondary/10 hover:border-secondary/50 hover:text-secondary transition-all group whitespace-nowrap tracking-wider"
               onClick={() => navigate('/adventures')}
             >
-              <span className="material-symbols-outlined text-amber-400 group-hover:rotate-12 transition-transform mr-2">explore</span> Petualanganku
+              <span className="material-symbols-outlined text-amber-400 group-hover:rotate-12 transition-transform mr-2 text-sm md:text-base shrink-0">explore</span> Petualanganku
             </MotionButton>
 
             <Dialog>
@@ -71,9 +71,9 @@ export const LandingPage: React.FC = () => {
                 <MotionButton 
                   size="lg" 
                   variant="outline" 
-                  className="w-full font-pixel text-base py-6 bg-card/80 border-border hover:bg-success/10 hover:border-success/50 hover:text-success transition-all group flex items-center justify-center"
+                  className="w-auto inline-flex items-center justify-center min-w-[280px] md:min-w-[320px] text-[10px] sm:text-xs md:text-base px-6 py-3.5 mx-auto font-pixel bg-card/80 border-border hover:bg-success/10 hover:border-success/50 hover:text-success transition-all group whitespace-nowrap tracking-wider"
                 >
-                  <span className="material-symbols-outlined text-amber-400 group-hover:scale-110 transition-transform mr-2">auto_awesome</span> Petualangan Baru
+                  <span className="material-symbols-outlined text-amber-400 group-hover:scale-110 transition-transform mr-2 text-sm md:text-base shrink-0">auto_awesome</span> Petualangan Baru
                 </MotionButton>
               </DialogTrigger>
               <DialogContent className="sm:max-w-4xl bg-card border-secondary/50 max-h-[90vh] overflow-y-auto">
@@ -138,7 +138,7 @@ export const LandingPage: React.FC = () => {
             </SlideUp>
             <ScaleIn>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <MotionButton size="lg" variant="default" className="w-full sm:w-auto font-pixel text-sm group" onClick={() => document.getElementById("upload-section")?.scrollIntoView({ behavior: "smooth" })}>
+                <MotionButton size="lg" variant="default" className="text-xs sm:text-sm md:text-base font-pixel px-3 py-2.5 sm:px-4 sm:py-3 w-full sm:w-auto mx-auto lg:mx-0 group" onClick={() => document.getElementById("upload-section")?.scrollIntoView({ behavior: "smooth" })}>
                   <Play className="mr-2 w-4 h-4 group-hover:animate-pulse" /> Mulai Petualangan
                 </MotionButton>
               </div>
