@@ -1,11 +1,7 @@
 import React from "react"
 import { useAdventureStore } from "@/store/useAdventureStore"
 
-interface WorldBannerProps {
-  onOpenLore: () => void
-}
-
-export const WorldBanner: React.FC<WorldBannerProps> = ({ onOpenLore }) => {
+export const WorldBanner: React.FC = () => {
   const activeAdventure = useAdventureStore(state => state.getActive())
   if (!activeAdventure) return null
 
@@ -82,13 +78,6 @@ export const WorldBanner: React.FC<WorldBannerProps> = ({ onOpenLore }) => {
               </span>
             )}
           </div>
-
-          <button 
-            onClick={onOpenLore}
-            className="inline-flex items-center gap-2 px-6 py-2 bg-background-deep border-[3px] border-secondary text-secondary shadow-button shadow-glow-achievement hover:bg-secondary/20 transition-hover pixel-borders font-pixel text-sm uppercase"
-          >
-            📖 Lore Mastery
-          </button>
         </div>
       </div>
     </div>

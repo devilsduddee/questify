@@ -7,13 +7,16 @@ import { motion, AnimatePresence } from "framer-motion"
 import { DashboardLayout } from "@/components/layout/DashboardLayout"
 import { useAdventureStore } from "@/store/useAdventureStore"
 import { usePlayerStore } from "@/store/usePlayerStore"
+import { logger } from "@/utils/logger"
 import { getRoleById } from "@/data/roles"
 import { generateSummary, LearningSummary } from "@/services/ai.service"
 import { Card, CardContent } from "@/components/ui/card"
 import { MotionButton } from "@/components/ui/button"
 import { SlideUp, ScaleIn } from "@/components/common/AnimationWrapper"
 import { Flashcard } from "@/components/common/Flashcard"
-// removed ProgressBar
+
+// Module-level guard to prevent duplicate concurrent AI requests across re-renders (StrictMode safe)
+const summaryGenerationInFlight = new Set<string>()
 
 export const QuestPage: React.FC = () => {
   const { nodeId } = useParams<{ nodeId: string }>()
@@ -35,23 +38,56 @@ export const QuestPage: React.FC = () => {
 
   useEffect(() => {
     if (!node) return
+    
+    // LAYER 1: Existing Data Guard
+    // If summary data already exists, load it from cache (Supabase / Zustand)
+    if ((node as any).summaryData) {
+      if (isLoading) {
+        logger.success('Quest', '✅ Summary loaded from cache')
+        logger.info('AI', `⏭️ generateSummary SKIPPED - existing data node=${node.id}`)
+        setSummary((node as any).summaryData)
+        setIsLoading(false)
+      }
+      return
+    }
+
+    // LAYER 2: In-Flight Guard
+    if (summaryGenerationInFlight.has(node.id)) {
+      logger.info('AI', `⏭️ generateSummary SKIPPED - already in flight node=${node.id}`)
+      return
+    }
 
     const fetchKnowledge = async () => {
+      logger.info('Quest', `📖 Opening node: ${node.title}`)
+      logger.error('Quest', '❌ Summary not found')
+      logger.info('Quest', '🤖 Requesting AI summary...')
+      
+      summaryGenerationInFlight.add(node.id)
       setIsLoading(true)
+      
       try {
+        logger.info('AI', `🤖 generateSummary START node=${node.id}`)
         const context = `Provide a comprehensive learning overview about ${node.title}: ${node.description}`
         const roleDef = getRoleById(role)
         const result = await generateSummary(node.title, context, roleDef?.name, roleDef?.storyStyle)
+        
+        logger.info('AI', `✅ generateSummary SUCCESS node=${node.id}`)
+        
+        // LAYER 3: Immediate State Update
         setSummary(result)
-      } catch {
+        useAdventureStore.getState().saveNodeSummary(node.id, result)
+        logger.info('Cloud', `☁️ summary saved node=${node.id}`)
+        logger.success('Quest', '🎉 Quest content ready')
+      } catch (err) {
         setError("Sang Pustakawan AI gagal membaca materi ini. Coba lagi nanti.")
       } finally {
+        summaryGenerationInFlight.delete(node.id)
         setIsLoading(false)
       }
     }
 
     fetchKnowledge()
-  }, [node, role])
+  }, [node?.id, node?.title, node?.description, (node as any)?.summaryData, role, isLoading]) // Added strict primitive dependencies
 
   if (!activeAdventure || !node) {
     return (

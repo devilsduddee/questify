@@ -1,9 +1,10 @@
 // AI Service Layer for Questify
 // Utilizes OpenRouter API to access Gemini models for generation tasks.
+import { logger } from "@/utils/logger"
 
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 // Using Llama 3.1 8B Instruct via OpenRouter for fast, free JSON generation
-const DEFAULT_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free"
+const DEFAULT_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
 
 // Fallback key if not provided (though security.md dictates environment variables)
 const getApiKey = () => import.meta.env.VITE_OPENROUTER_API_KEY || ""
@@ -41,7 +42,7 @@ async function fetchWithRetry(url: string, options: FetchOptions = {}): Promise<
           if (errorData.error && errorData.error.message) {
             errorMsg = `AI API Error (${response.status}): ${errorData.error.message}`
           }
-        } catch (e) {
+        } catch {
           // Ignore if it's not JSON
         }
         throw new Error(errorMsg)
@@ -55,14 +56,27 @@ async function fetchWithRetry(url: string, options: FetchOptions = {}): Promise<
       lastError = err
 
       if (err.name === 'AbortError') {
-        console.warn(`[AI Service] Attempt ${attempt + 1} timed out.`)
+        logger.warn('AI', `Attempt ${attempt + 1} timed out.`)
       } else {
-        console.warn(`[AI Service] Attempt ${attempt + 1} failed:`, err.message)
+        logger.error('AI', `Attempt ${attempt + 1} failed: ${err.message}`)
       }
 
       if (attempt < retries) {
-        // Exponential backoff
-        await new Promise(resolve => setTimeout(resolve, retryDelayMs * Math.pow(2, attempt)))
+        // Stop aggressive retrying for rate limits
+        if (err.message.includes('429')) {
+          logger.warn('AI', '⚠️ Rate limit detected')
+          if (attempt >= 1) { // Only retry once for 429
+            throw new Error(`Rate limit exceeded. Try again later.`)
+          }
+          logger.info('AI', '⏱️ Waiting 2000ms...')
+          logger.info('AI', `🔄 Retry ${attempt + 1}/${retries}`)
+          await new Promise(resolve => setTimeout(resolve, 2000)) // Static limited backoff for 429
+        } else {
+          logger.info('AI', `⏱️ Waiting ${retryDelayMs * Math.pow(2, attempt)}ms...`)
+          logger.info('AI', `🔄 Retry ${attempt + 1}/${retries}`)
+          // Exponential backoff
+          await new Promise(resolve => setTimeout(resolve, retryDelayMs * Math.pow(2, attempt)))
+        }
       }
     }
   }
@@ -104,7 +118,7 @@ async function callOpenRouter(systemPrompt: string, userMessage: string, timeout
   const data = await response.json()
 
   if (!data.choices || data.choices.length === 0) {
-    console.error("OpenRouter Error Data:", data)
+    logger.error('AI', `❌ Error Data format`, data)
     throw new Error(`AI Error: ${data.error?.message || "Invalid response format"}`)
   }
 
@@ -214,7 +228,22 @@ Output strictly in the following JSON format:
   ]
 }`
 
-  return await callOpenRouter(prompt, syllabusText, 25000) as QuestMap
+  logger.info('AI', '🤖 generateQuest START')
+  logger.info('AI', '📚 Processing syllabus...')
+  const startTime = performance.now()
+  logger.info('AI', '⏳ Waiting for OpenRouter...')
+
+  try {
+    const result = await callOpenRouter(prompt, syllabusText, 25000) as QuestMap
+    const duration = ((performance.now() - startTime) / 1000).toFixed(2)
+    logger.success('AI', `✅ generateQuest SUCCESS (${duration}s)`)
+    logger.info('AI', `📦 Nodes generated: ${result.nodes.length}`)
+    return result
+  } catch (err: any) {
+    logger.error('AI', '❌ generateQuest FAILED')
+    logger.error('AI', `❌ Message: ${err.message}`)
+    throw err
+  }
 }
 
 export interface LearningSummary {
@@ -242,7 +271,20 @@ Provide a learning summary in the following JSON format:
   ]
 }`
 
-  return await callOpenRouter(prompt, `Topic: ${topicTitle}\nContext:\n${syllabusContext}`, 20000) as LearningSummary
+  logger.info('AI', '🤖 generateSummary START')
+  const startTime = performance.now()
+  logger.info('AI', '⏳ Waiting for OpenRouter...')
+
+  try {
+    const result = await callOpenRouter(prompt, `Topic: ${topicTitle}\nContext:\n${syllabusContext}`, 20000) as LearningSummary
+    const duration = ((performance.now() - startTime) / 1000).toFixed(2)
+    logger.success('AI', `✅ generateSummary SUCCESS (${duration}s)`)
+    return result
+  } catch (err: any) {
+    logger.error('AI', '❌ generateSummary FAILED')
+    logger.error('AI', `❌ Message: ${err.message}`)
+    throw err
+  }
 }
 
 export interface QuizQuestion {
@@ -279,5 +321,19 @@ Output strictly in the following JSON format:
   ]
 }`
 
-  return await callOpenRouter(prompt, `Topic: ${topicTitle}\nContext:\n${syllabusContext}`, 25000) as BossQuiz
+  logger.info('AI', '🤖 generateQuiz START')
+  const startTime = performance.now()
+  logger.info('AI', '⏳ Waiting for OpenRouter...')
+
+  try {
+    const result = await callOpenRouter(prompt, `Topic: ${topicTitle}\nContext:\n${syllabusContext}`, 25000) as BossQuiz
+    const duration = ((performance.now() - startTime) / 1000).toFixed(2)
+    logger.success('AI', `✅ generateQuiz SUCCESS (${duration}s)`)
+    logger.info('AI', `📦 Questions generated: ${result.questions.length}`)
+    return result
+  } catch (err: any) {
+    logger.error('AI', '❌ generateQuiz FAILED')
+    logger.error('AI', `❌ Message: ${err.message}`)
+    throw err
+  }
 }

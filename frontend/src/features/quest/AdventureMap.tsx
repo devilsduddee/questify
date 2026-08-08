@@ -1,6 +1,7 @@
-import React, { useState } from "react"
+import React from "react"
 import { motion } from "framer-motion"
 import { useAdventureStore } from "@/store/useAdventureStore"
+import { logger } from "@/utils/logger"
 import { QuestNode } from "@/components/common/QuestNode"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MotionButton } from "@/components/ui/button"
@@ -8,12 +9,10 @@ import { useNavigate } from "react-router-dom"
 import { MapBackground } from "@/components/map/MapBackground"
 import { MapPath } from "@/components/map/MapPath"
 import { QuestAreaDecoration } from "@/components/map/QuestAreaDecoration"
-import { LoreMasteryPanel } from "@/components/map/LoreMasteryPanel"
 import { WorldBanner } from "@/components/map/WorldBanner"
 import { IntroModal } from "@/components/map/IntroModal"
 
 export const AdventureMap: React.FC = () => {
-  const [isLoreOpen, setIsLoreOpen] = useState(false)
   const activeAdventure = useAdventureStore(state => state.getActive())
   const nodes = activeAdventure?.nodes || []
   const activeNodeId = activeAdventure?.activeNodeId || null
@@ -32,7 +31,7 @@ export const AdventureMap: React.FC = () => {
 
         <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center pb-32 pt-8">
           
-          <WorldBanner onOpenLore={() => setIsLoreOpen(true)} />
+          <WorldBanner />
           
           {/* Winding path container */}
           <div className="relative flex flex-col items-center w-full min-h-[500px]">
@@ -106,8 +105,10 @@ export const AdventureMap: React.FC = () => {
                 variant={activeNode.isBoss ? "destructive" : "default"}
                 onClick={() => {
                   if (activeNode.isBoss) {
+                    logger.info('Navigation', '⚔️ → Battle')
                     navigate(`/battle/${activeNode.id}`)
                   } else {
+                    logger.info('Navigation', '📖 → Quest')
                     navigate(`/quest/${activeNode.id}`)
                   }
                 }}
@@ -123,7 +124,6 @@ export const AdventureMap: React.FC = () => {
         )}
       </div>
 
-      <LoreMasteryPanel isOpen={isLoreOpen} onClose={() => setIsLoreOpen(false)} />
       <IntroModal />
     </div>
   )

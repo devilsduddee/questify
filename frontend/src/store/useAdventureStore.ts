@@ -17,6 +17,8 @@ export interface QuestNodeModel {
     name: string
     description: string
   }
+  summaryData?: any // Store AI generated summary
+  quizData?: any // Store AI generated quiz
 }
 
 interface Adventure {
@@ -64,7 +66,7 @@ export interface AdventureState {
   activeAdventureId: string | null
   
   // Adventure Management Actions
-  createNewAdventure: (courseName: string, worldName: string, nodes: Omit<QuestNodeModel, 'status'>[], identity?: Partial<Adventure>) => void
+  createNewAdventure: (courseName: string, worldName: string, nodes: Omit<QuestNodeModel, 'status'>[], identity?: Partial<Adventure>) => Promise<void>
   setActiveAdventure: (id: string) => void
   deleteAdventure: (id: string) => void
   markIntroAsSeen: (id: string) => void
@@ -82,6 +84,10 @@ export interface AdventureState {
   // Cloud Sync
   loadFromCloud: (adventures: Adventure[]) => void
   resetAdventures: () => void
+  
+  // AI Cache Management
+  saveNodeSummary: (nodeId: string, summaryData: any) => void
+  saveNodeQuiz: (nodeId: string, quizData: any) => void
 }
 
 const INITIAL_ADVENTURE_STATE = {
@@ -102,7 +108,13 @@ export const useAdventureStore = create<AdventureState>()(
         return adventures.find(a => a.id === activeAdventureId) || null
       },
 
-      createNewAdventure: (courseName, worldName, nodes, identity) => {
+      createNewAdventure: async (courseName, worldName, nodes, identity) => {
+        console.log('[Cloud] createAdventure START')
+        
+        if (!nodes || nodes.length === 0) {
+          throw new Error('Quest map generated empty nodes. Please try again.')
+        }
+
         const mappedNodes = nodes.map((n, idx) => ({
           ...n,
           status: (idx === 0 ? "available" : "locked") as any
@@ -121,6 +133,18 @@ export const useAdventureStore = create<AdventureState>()(
           ...identity
         }
 
+        if (newAdventure.nodes.length !== mappedNodes.length || newAdventure.nodes.length === 0) {
+          throw new Error('Node mapping failed.')
+        }
+        
+        console.log(`[Cloud] nodes to save: ${newAdventure.nodes.length}`)
+
+        const { cloudSyncService } = await import('@/services/cloudSync.service')
+        
+        // Wait for cloud sync to complete fully before updating local state
+        await cloudSyncService.syncAdventureImmediate(newAdventure)
+
+        // Only update local state if cloud sync succeeds
         set(state => ({
           adventures: [...state.adventures, newAdventure],
           activeAdventureId: newAdventure.id
@@ -131,10 +155,6 @@ export const useAdventureStore = create<AdventureState>()(
         if (!playerStore.globalAchievements.find(a => a.id === ACH_FIRST_ADVENTURE)) {
           playerStore.unlockGlobalAchievement(ACH_FIRST_ADVENTURE)
         }
-        
-        import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
-          cloudSyncService.syncAdventureImmediate(newAdventure)
-        })
       },
 
       setActiveAdventure: (id) => set(state => {
@@ -341,6 +361,44 @@ export const useAdventureStore = create<AdventureState>()(
 
       resetAdventures: () => {
         set({ adventures: [], activeAdventureId: null })
-      }
+      },
+
+      saveNodeSummary: (nodeId, summaryData) => set(state => {
+        const { activeAdventureId, adventures } = state
+        if (!activeAdventureId) return state
+        
+        return {
+          adventures: adventures.map(adv => {
+            if (adv.id !== activeAdventureId) return adv
+            const newNodes = adv.nodes.map(n => 
+              n.id === nodeId ? { ...n, summaryData } : n
+            )
+            const newAdv = { ...adv, nodes: newNodes, lastPlayedAt: Date.now() }
+            import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
+              cloudSyncService.syncAdventure(newAdv)
+            })
+            return newAdv
+          })
+        }
+      }),
+
+      saveNodeQuiz: (nodeId, quizData) => set(state => {
+        const { activeAdventureId, adventures } = state
+        if (!activeAdventureId) return state
+        
+        return {
+          adventures: adventures.map(adv => {
+            if (adv.id !== activeAdventureId) return adv
+            const newNodes = adv.nodes.map(n => 
+              n.id === nodeId ? { ...n, quizData } : n
+            )
+            const newAdv = { ...adv, nodes: newNodes, lastPlayedAt: Date.now() }
+            import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
+              cloudSyncService.syncAdventure(newAdv)
+            })
+            return newAdv
+          })
+        }
+      })
     })
 )

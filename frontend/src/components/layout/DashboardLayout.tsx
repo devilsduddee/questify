@@ -11,6 +11,7 @@ import { CharacterWidget } from "@/components/layout/CharacterWidget"
 import questifyLogo from "@/assets/questify-q-logo.png"
 import mageAvatar from "@/assets/mage-avatar.png"
 import { AVAILABLE_AVATARS } from "@/components/common/AvatarSelection"
+import { logger } from "@/utils/logger"
 
 interface DashboardLayoutProps {
   children?: React.ReactNode
@@ -51,7 +52,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, vari
         {/* LEFT SECTION: Logo & Brand */}
         <div className="flex items-center gap-3 w-1/4">
           <motion.div whileHover={{ scale: 1.05 }} className="cursor-pointer">
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/" onClick={() => logger.info('Navigation', '🏠 → Landing')} className="flex items-center gap-2">
               <div className="w-12 h-12 flex items-center justify-center shadow-glow-quest bg-black/50 rounded overflow-hidden border border-primary/50">
                 <img src={questifyLogo} alt="Questify Logo" className="w-full h-full object-cover" />
               </div>
@@ -154,11 +155,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, vari
 
                     {/* Bottom Section: Navigation */}
                     <div className="flex flex-col gap-2 mt-1">
-                      <Link to="/map" className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/40 border border-slate-700/30 hover:bg-slate-800 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link to="/map" className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/40 border border-slate-700/30 hover:bg-slate-800 transition-colors" onClick={() => { setIsMobileMenuOpen(false); logger.info('Navigation', '🗺️ → Adventure Map') }}>
                         <span className="material-symbols-outlined text-purple-400 text-sm">explore</span>
                         <span className="font-heading text-sm text-white">Peta Petualangan</span>
                       </Link>
-                      <Link to="/adventures" className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/40 border border-slate-700/30 hover:bg-slate-800 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link to="/adventures" className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/40 border border-slate-700/30 hover:bg-slate-800 transition-colors" onClick={() => { setIsMobileMenuOpen(false); logger.info('Navigation', '🎮 → Main Menu') }}>
                         <span className="material-symbols-outlined text-blue-400 text-sm">history_edu</span>
                         <span className="font-heading text-sm text-white">Petualanganku</span>
                       </Link>

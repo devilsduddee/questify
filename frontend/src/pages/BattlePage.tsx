@@ -8,11 +8,15 @@ import { useAdventureStore } from "@/store/useAdventureStore"
 import { usePlayerStore } from "@/store/usePlayerStore"
 import { useBattleStore } from "@/store/useBattleStore"
 import { generateQuiz } from "@/services/ai.service"
+import { logger } from "@/utils/logger"
 import { MotionButton } from "@/components/ui/button"
 import { SlideUp, ScaleIn } from "@/components/common/AnimationWrapper"
 import { BattleBackground } from "@/components/battle/BattleBackground"
 import { QuizArena } from "@/components/battle/QuizArena"
 import { getRoleById } from "@/data/roles"
+
+// Module-level guard to prevent duplicate concurrent AI requests across re-renders (StrictMode safe)
+const quizGenerationInFlight = new Set<string>()
 
 export const BattlePage: React.FC = () => {
   const { nodeId } = useParams<{ nodeId: string }>()
@@ -47,17 +51,50 @@ export const BattlePage: React.FC = () => {
     
     if (battle.status === "active" && battle.currentBossId === nodeId) return
 
+    // LAYER 1: Existing Data Guard
+    if ((node as any).quizData) {
+      if (isLoading) {
+        logger.success('Battle', '✅ Quiz loaded from cache')
+        logger.info('AI', `⏭️ generateQuiz SKIPPED - existing data node=${node.id}`)
+        battle.initBattle(node.id, (node as any).quizData.bossName, (node as any).quizData.questions)
+        setIsLoading(false)
+      }
+      return
+    }
+
+    // LAYER 2: In-Flight Guard
+    if (quizGenerationInFlight.has(node.id)) {
+      logger.info('AI', `⏭️ generateQuiz SKIPPED - already in flight node=${node.id}`)
+      return
+    }
+
     const fetchQuiz = async () => {
+      logger.info('Battle', '⚔️ Opening battle')
+      logger.info('Battle', '🔍 Checking quiz cache...')
+      logger.error('Battle', '❌ Quiz not found')
+      
+      quizGenerationInFlight.add(node.id)
       setIsLoading(true)
+      
       try {
+        logger.info('AI', `🤖 generateQuiz START node=${node.id}`)
         const context = `Berikan kuis pertarungan bos yang sulit untuk menguji pengetahuan tentang ${node.title}: ${node.description}`
         const roleDef = getRoleById(role)
         const result = await generateQuiz(node.title, context, 5, roleDef?.name, roleDef?.storyStyle)
         
+        logger.info('AI', `✅ generateQuiz SUCCESS node=${node.id}`)
+        
+        // LAYER 3: Immediate State Update
         battle.initBattle(node.id, result.bossName, result.questions)
-      } catch {
+        useAdventureStore.getState().saveNodeQuiz(node.id, result)
+        
+        logger.info('Cloud', `☁️ quiz saved node=${node.id}`)
+        logger.success('Battle', '🎯 Quiz ready')
+        logger.info('Battle', '⚔️ Battle initialized')
+      } catch (err) {
         setError("Gagal memanggil Bos. Silakan periksa Koneksi atau API Key Anda.")
       } finally {
+        quizGenerationInFlight.delete(node.id)
         setIsLoading(false)
       }
     }
@@ -65,7 +102,7 @@ export const BattlePage: React.FC = () => {
     if (battle.status === "idle" || battle.status === "victory" || battle.status === "lose") {
       fetchQuiz()
     }
-  }, [node, nodeId, battle.status, battle.currentBossId, battle, role])
+  }, [node?.id, node?.title, node?.description, (node as any)?.quizData, nodeId, battle.status, battle.currentBossId, role, isLoading]) // Added strict primitive dependencies
 
   if (isLoading) {
     return (

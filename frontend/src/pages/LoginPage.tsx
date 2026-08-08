@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import { logger } from '@/utils/logger'
 import { MotionButton } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import authBg from '@/assets/auth-bg.png'
@@ -16,6 +17,9 @@ export const LoginPage: React.FC = () => {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    
+    logger.info('Auth', '🔐 Login started')
+    logger.info('Auth', '⏳ Authenticating...')
 
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
@@ -26,6 +30,7 @@ export const LoginPage: React.FC = () => {
       setError(signInError.message)
       setLoading(false)
     } else {
+      logger.success('Auth', '✅ Login successful')
       navigate('/')
     }
   }

@@ -85,7 +85,7 @@ export const SyllabusUpload: React.FC = () => {
       // Result is already validated by ai.service.ts
       // Generate a course name based on fileName, or just "Manual Input"
       const courseName = fileName ? fileName.replace(/\.[^/.]+$/, "") : "Course"
-      createNewAdventure(courseName, result.worldName, result.nodes, {
+      await createNewAdventure(courseName, result.worldName, result.nodes, {
         worldSubtitle: result.worldSubtitle,
         worldDescription: result.worldDescription,
         worldElement: result.worldElement,

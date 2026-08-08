@@ -16,7 +16,7 @@ import { supabase } from "@/lib/supabase"
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate()
-  const { session, isCloudLoading } = useAuthStore()
+  const { session, appStatus } = useAuthStore()
   const adventures = useAdventureStore(state => state.adventures)
   const hasAdventures = adventures.length > 0
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -57,7 +57,7 @@ export const LandingPage: React.FC = () => {
             <p className="font-pixel text-muted-foreground text-sm mt-4 tracking-widest uppercase">The Kingdom of Knowledge</p>
           </FadeIn>
 
-          {isCloudLoading ? (
+          {appStatus === 'HYDRATING' ? (
             <SlideUp className="flex flex-col items-center justify-center gap-6 w-full py-12">
               <div className="relative w-16 h-16 flex items-center justify-center">
                 <div className="absolute inset-0 border-4 border-secondary/30 rounded-full animate-ping"></div>

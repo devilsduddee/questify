@@ -2,16 +2,29 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/store/useAuthStore'
 import { usePlayerStore } from '@/store/usePlayerStore'
+import { logger } from '@/utils/logger'
 import { RoleSelection } from './RoleSelection'
 import { MotionButton } from '@/components/ui/button'
 
 export const RoleSelectionModal: React.FC = () => {
-  const { session, isInitialized, isCloudLoading } = useAuthStore()
+  const { session, appStatus } = useAuthStore()
   const { role, setRole } = usePlayerStore()
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
+  const [hasLogged, setHasLogged] = useState(false)
   
   // Only show if user is fully logged in, initialized, cloud sync finished, and role is still null
-  const shouldShow = isInitialized && session && !isCloudLoading && role === null
+  const shouldShow = appStatus === 'READY' && session && role === null
+  
+  React.useEffect(() => {
+    if (appStatus === 'READY' && session && !hasLogged) {
+      if (role) {
+        logger.info('Role', 'Existing role detected - modal skipped')
+      } else {
+        logger.warn('Role', 'No role detected - showing RoleSelectionModal')
+      }
+      setHasLogged(true)
+    }
+  }, [appStatus, session, role, hasLogged])
   
   if (!shouldShow) return null
 

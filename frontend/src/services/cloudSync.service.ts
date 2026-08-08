@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { logger } from '@/utils/logger'
 
 export interface CloudSyncService {
   syncProfile: (name: string, role: string | null, globalAchievements: any[]) => Promise<void>;
@@ -54,7 +55,7 @@ export const cloudSyncService: CloudSyncService = {
       .eq('id', user.id)
 
     if (error) {
-      console.error('Failed to sync profile:', error)
+      logger.error('Cloud', 'Failed to sync profile:', error)
     }
   }),
 
@@ -90,7 +91,7 @@ export const cloudSyncService: CloudSyncService = {
       }, { onConflict: 'id' })
 
     if (error) {
-      console.error('Failed to sync adventure:', error)
+      logger.error('Cloud', 'Failed to sync adventure:', error)
     }
   }),
 
@@ -126,8 +127,13 @@ export const cloudSyncService: CloudSyncService = {
       }, { onConflict: 'id' })
 
     if (error) {
-      console.error('Failed to immediately sync adventure:', error)
+      logger.error('Cloud', '❌ createAdventure FAILED', error)
+      logger.error('Cloud', `❌ Error: ${error.message}`)
+      throw new Error(`Cloud Sync Failed: ${error.message}`)
     }
+    
+    logger.success('Cloud', '✅ createAdventure SUCCESS')
+    logger.info('Cloud', `📦 saved nodes: ${adventure.nodes?.length || 0}`)
   },
 
   deleteAdventure: async (adventureId: string) => {
@@ -141,11 +147,12 @@ export const cloudSyncService: CloudSyncService = {
       .eq('user_id', user.id)
 
     if (error) {
-      console.error('Failed to delete adventure from cloud:', error)
+      logger.error('Cloud', 'Failed to delete adventure from cloud:', error)
     }
   },
 
   fetchCloudAdventures: async () => {
+    logger.info('Cloud', '☁️ Loading adventures...')
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return []
 
@@ -156,11 +163,11 @@ export const cloudSyncService: CloudSyncService = {
       .order('last_played_at', { ascending: false })
 
     if (error) {
-      console.error('Failed to fetch cloud adventures:', error)
+      logger.error('Cloud', 'Failed to fetch cloud adventures:', error)
       return []
     }
 
-    return data.map((d: any) => ({
+    const result = data.map((d: any) => ({
       id: d.id,
       courseName: d.course_name,
       worldName: d.world_name,
@@ -184,6 +191,13 @@ export const cloudSyncService: CloudSyncService = {
       lastPlayedAt: new Date(d.last_played_at).getTime(),
       createdAt: new Date(d.created_at).getTime(),
     }))
+
+    logger.info('Cloud', `📦 Adventures found: ${result.length}`)
+    result.forEach((adv: any) => {
+      logger.info('Cloud', `📍 Nodes loaded: ${adv.nodes?.length || 0} for adventure ${adv.id}`)
+    })
+
+    return result
   },
 
   fetchCloudProfile: async () => {
@@ -197,7 +211,8 @@ export const cloudSyncService: CloudSyncService = {
       .single()
 
     if (error && error.code !== 'PGRST116') { // Ignore row not found error if we can fallback to metadata
-      console.error('Failed to fetch cloud profile:', error)
+      logger.error('Cloud', 'Failed to fetch cloud profile:', error)
+      return null
     }
 
     let finalName = data?.display_name

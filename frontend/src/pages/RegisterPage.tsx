@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import { logger } from '@/utils/logger'
 import { MotionButton } from '@/components/ui/button'
 import { RoleSelection } from '@/components/common/RoleSelection'
 import { AvatarSelection } from '@/components/common/AvatarSelection'
@@ -26,6 +27,10 @@ export const RegisterPage: React.FC = () => {
     }
     setLoading(true)
     setError(null)
+    
+    logger.info('Auth', '📝 Registration started')
+    logger.info('Auth', `🎭 Selected role: ${selectedRole}`)
+    logger.info('Auth', '⏳ Creating account...')
 
     const { error: signUpError } = await supabase.auth.signUp({
       email,
@@ -54,6 +59,7 @@ export const RegisterPage: React.FC = () => {
         }).eq('id', user.id)
       }
       
+      logger.success('Auth', '✅ Registration successful')
       navigate('/')
     }
   }
