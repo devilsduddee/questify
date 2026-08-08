@@ -1,7 +1,7 @@
 import React from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import landingBgImg from "@/assets/landing-bg.png"
-import { Target, Trophy, Play, Wand2, Sword } from "lucide-react"
+import { Target, Trophy, Play, Wand2, Sword, LogOut } from "lucide-react"
 
 import { MotionButton } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
@@ -9,14 +9,23 @@ import { FadeIn, SlideUp, ScaleIn } from "@/components/common/AnimationWrapper"
 import { QuestNode } from "@/components/common/QuestNode"
 import { SyllabusUpload } from "@/features/upload/SyllabusUpload"
 import { useAdventureStore } from "@/store/useAdventureStore"
+import { useAuthStore } from "@/store/useAuthStore"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { supabase } from "@/lib/supabase"
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate()
+  const { session, isCloudLoading } = useAuthStore()
   const adventures = useAdventureStore(state => state.adventures)
   const hasAdventures = adventures.length > 0
+  
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    navigate('/')
+  }
 
-  if (hasAdventures) {
+  // If user is authenticated -> Render Main Menu RPG
+  if (session) {
     return (
       <div 
         className="min-h-screen bg-background overflow-hidden relative selection:bg-primary/30 flex flex-col items-center justify-center bg-cover bg-center"
@@ -40,40 +49,70 @@ export const LandingPage: React.FC = () => {
         </div>
 
         <div className="relative z-10 flex flex-col items-center w-full max-w-md px-4">
-          <FadeIn className="flex flex-col items-center mb-16">
+          <FadeIn className="flex flex-col items-center mb-12">
             <Sword className="w-16 h-16 text-secondary mb-4 drop-shadow-md" />
             <h1 className="font-heading text-6xl text-glow text-secondary tracking-widest font-bold text-center">QUESTIFY</h1>
             <p className="font-pixel text-muted-foreground text-sm mt-4 tracking-widest uppercase">The Kingdom of Knowledge</p>
           </FadeIn>
 
-          <SlideUp className="flex flex-col items-center justify-center gap-3 md:gap-4 w-full">
-            <MotionButton 
-              size="lg" 
-              variant="default" 
-              className="w-auto inline-flex items-center justify-center min-w-[280px] md:min-w-[320px] text-[10px] sm:text-xs md:text-base px-6 py-3.5 mx-auto font-pixel group relative overflow-hidden bg-[#1E293B] border-[3px] border-primary hover:bg-primary/20 hover:border-primary shadow-glow-quest hover:shadow-glow-quest transition-hover whitespace-nowrap tracking-wider"
-              onClick={() => navigate('/map')}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent group-hover:translate-x-full transition-transform duration-1000 -translate-x-full" />
-              <Play className="mr-2 w-4 h-4 md:w-5 md:h-5 group-hover:animate-pulse text-secondary shrink-0" /> Lanjutkan Petualangan
-            </MotionButton>
-            
-            <MotionButton 
-              size="lg" 
-              variant="outline" 
-              className="w-auto inline-flex items-center justify-center min-w-[280px] md:min-w-[320px] text-[10px] sm:text-xs md:text-base px-6 py-3.5 mx-auto font-pixel bg-card/80 border-border hover:bg-secondary/10 hover:border-secondary/50 hover:text-secondary transition-all group whitespace-nowrap tracking-wider"
-              onClick={() => navigate('/adventures')}
-            >
-              <span className="material-symbols-outlined text-amber-400 group-hover:rotate-12 transition-transform mr-2 text-sm md:text-base shrink-0">explore</span> Petualanganku
-            </MotionButton>
+          {isCloudLoading ? (
+            <SlideUp className="flex flex-col items-center justify-center gap-6 w-full py-12">
+              <div className="relative w-16 h-16 flex items-center justify-center">
+                <div className="absolute inset-0 border-4 border-secondary/30 rounded-full animate-ping"></div>
+                <div className="absolute inset-0 border-4 border-t-secondary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+                <Sword className="w-6 h-6 text-secondary animate-pulse" />
+              </div>
+              <p className="font-pixel text-secondary text-glow animate-pulse tracking-widest uppercase text-center">
+                MEMBUKA GERBANG DUNIA...
+              </p>
+            </SlideUp>
+          ) : (
+            <SlideUp className="flex flex-col items-center justify-center gap-3 w-full">
+            {hasAdventures ? (
+              <>
+                <MotionButton 
+                  size="lg" 
+                  variant="default" 
+                  className="w-full text-xs md:text-base px-6 py-4 font-pixel group relative overflow-hidden bg-[#1E293B] border-[3px] border-primary hover:bg-primary/20 hover:border-primary shadow-glow-quest transition-hover tracking-wider"
+                  onClick={() => {
+                    // Navigate to the last played adventure
+                    const latest = [...adventures].sort((a, b) => b.lastPlayedAt - a.lastPlayedAt)[0]
+                    useAdventureStore.getState().setActiveAdventure(latest.id)
+                    navigate('/map')
+                  }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent group-hover:translate-x-full transition-transform duration-1000 -translate-x-full" />
+                  <Play className="mr-2 w-5 h-5 group-hover:animate-pulse text-secondary shrink-0" /> Lanjutkan Petualangan
+                </MotionButton>
+                
+                <MotionButton 
+                  size="lg" 
+                  variant="outline" 
+                  className="w-full text-xs md:text-base px-6 py-4 font-pixel bg-card/80 hover:bg-secondary/10 hover:border-secondary/50 hover:text-secondary transition-all group tracking-wider"
+                  onClick={() => navigate('/adventures')}
+                >
+                  <span className="material-symbols-outlined text-amber-400 group-hover:rotate-12 transition-transform mr-2 text-base shrink-0">explore</span> Petualanganku
+                </MotionButton>
+              </>
+            ) : (
+              <div className="mb-6 text-center">
+                <p className="font-pixel text-muted-foreground mb-4">Belum ada petualangan.</p>
+              </div>
+            )}
 
             <Dialog>
               <DialogTrigger asChild>
                 <MotionButton 
                   size="lg" 
-                  variant="outline" 
-                  className="w-auto inline-flex items-center justify-center min-w-[280px] md:min-w-[320px] text-[10px] sm:text-xs md:text-base px-6 py-3.5 mx-auto font-pixel bg-card/80 border-border hover:bg-success/10 hover:border-success/50 hover:text-success transition-all group whitespace-nowrap tracking-wider"
+                  variant={hasAdventures ? "outline" : "default"} 
+                  className={`w-full text-xs md:text-base px-6 py-4 font-pixel transition-all group tracking-wider ${
+                    hasAdventures 
+                      ? "bg-card/80 hover:bg-success/10 hover:border-success/50 hover:text-success" 
+                      : "bg-[#1E293B] border-[3px] border-primary hover:bg-primary/20 hover:border-primary shadow-glow-quest"
+                  }`}
                 >
-                  <span className="material-symbols-outlined text-amber-400 group-hover:scale-110 transition-transform mr-2 text-sm md:text-base shrink-0">auto_awesome</span> Petualangan Baru
+                  <span className={`material-symbols-outlined ${hasAdventures ? "text-amber-400" : "text-secondary"} group-hover:scale-110 transition-transform mr-2 text-base shrink-0`}>auto_awesome</span> 
+                  {hasAdventures ? "Petualangan Baru" : "Buat Petualangan Pertama"}
                 </MotionButton>
               </DialogTrigger>
               <DialogContent className="sm:max-w-4xl bg-card border-secondary/50 max-h-[90vh] overflow-y-auto">
@@ -88,9 +127,20 @@ export const LandingPage: React.FC = () => {
                 </div>
               </DialogContent>
             </Dialog>
+            
+            {/* Logout Button */}
+            <MotionButton 
+              size="lg" 
+              variant="outline" 
+              className="w-full text-xs md:text-sm px-6 py-4 font-pixel bg-card/80 border-border/30 text-muted-foreground hover:bg-destructive/10 hover:border-destructive/50 hover:text-destructive transition-all group mt-2"
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2 w-4 h-4 group-hover:-translate-x-1 transition-transform shrink-0" /> Keluar
+            </MotionButton>
           </SlideUp>
+          )}
 
-          <FadeIn className="mt-16 text-center">
+          <FadeIn className="mt-12 text-center">
             <p className="text-xs text-muted-foreground font-sans">
               &copy; {new Date().getFullYear()} Questify. All Rights Reserved.
             </p>
@@ -100,6 +150,7 @@ export const LandingPage: React.FC = () => {
     )
   }
 
+  // If user is NOT authenticated -> Render Anonymous Landing
   return (
     <div 
       className="min-h-screen bg-background overflow-hidden relative selection:bg-primary/30 bg-cover bg-center"
@@ -121,6 +172,10 @@ export const LandingPage: React.FC = () => {
             <Sword className="w-8 h-8 text-secondary" />
             <span className="font-heading text-2xl text-glow text-secondary tracking-widest font-bold">Questify</span>
           </div>
+          <div className="flex items-center gap-4">
+            <Link to="/login" className="font-pixel text-xs text-muted-foreground hover:text-primary transition-colors">MASUK</Link>
+            <Link to="/register" className="font-pixel text-xs bg-primary/20 border border-primary text-primary px-4 py-2 hover:bg-primary/30 transition-colors">DAFTAR</Link>
+          </div>
         </nav>
 
         {/* Hero Section */}
@@ -138,7 +193,7 @@ export const LandingPage: React.FC = () => {
             </SlideUp>
             <ScaleIn>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <MotionButton size="lg" variant="default" className="text-xs sm:text-sm md:text-base font-pixel px-3 py-2.5 sm:px-4 sm:py-3 w-full sm:w-auto mx-auto lg:mx-0 group" onClick={() => document.getElementById("upload-section")?.scrollIntoView({ behavior: "smooth" })}>
+                <MotionButton size="lg" variant="default" className="text-xs sm:text-sm md:text-base font-pixel px-3 py-2.5 sm:px-4 sm:py-3 w-full sm:w-auto mx-auto lg:mx-0 group" onClick={() => navigate('/login')}>
                   <Play className="mr-2 w-4 h-4 group-hover:animate-pulse" /> Mulai Petualangan
                 </MotionButton>
               </div>
@@ -238,18 +293,6 @@ export const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Upload CTA Section */}
-        <section id="upload-section" className="py-24 flex flex-col items-center">
-          <SlideUp className="w-full">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-heading font-bold text-glow mb-4 text-secondary">Siap Menempa Takdirmu?</h2>
-              <p className="text-muted-foreground text-lg">Masukkan materi belajarmu di bawah ini untuk membuat petualangan pertamamu.</p>
-            </div>
-            <div className="px-4">
-              <SyllabusUpload />
-            </div>
-          </SlideUp>
-        </section>
       </div>
 
       {/* Footer */}

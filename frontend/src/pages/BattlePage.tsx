@@ -12,9 +12,10 @@ import { MotionButton } from "@/components/ui/button"
 import { SlideUp, ScaleIn } from "@/components/common/AnimationWrapper"
 import { BattleBackground } from "@/components/battle/BattleBackground"
 import { QuizArena } from "@/components/battle/QuizArena"
+import { getRoleById } from "@/data/roles"
 
 export const BattlePage: React.FC = () => {
-  const { id } = useParams<{ id: string }>()
+  const { nodeId } = useParams<{ nodeId: string }>()
   const navigate = useNavigate()
   
   const activeAdventure = useAdventureStore(state => state.getActive())
@@ -22,9 +23,10 @@ export const BattlePage: React.FC = () => {
   const gainXp = useAdventureStore(state => state.gainXp)
   const gainGold = useAdventureStore(state => state.gainGold)
   const unlockAchievement = useAdventureStore(state => state.unlockAchievement)
+  const { role, name } = usePlayerStore()
+  
   const nodes = activeAdventure?.nodes || []
   
-  const { name } = usePlayerStore()
   const battle = useBattleStore()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -38,18 +40,19 @@ export const BattlePage: React.FC = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [answerState, setAnswerState] = useState<"correct" | "wrong" | null>(null)
 
-  const node = nodes.find(n => n.id === id)
+  const node = nodes.find(n => n.id === nodeId)
 
   useEffect(() => {
     if (!node) return
     
-    if (battle.status === "active" && battle.currentBossId === id) return
+    if (battle.status === "active" && battle.currentBossId === nodeId) return
 
     const fetchQuiz = async () => {
       setIsLoading(true)
       try {
         const context = `Berikan kuis pertarungan bos yang sulit untuk menguji pengetahuan tentang ${node.title}: ${node.description}`
-        const result = await generateQuiz(node.title, context, 5)
+        const roleDef = getRoleById(role)
+        const result = await generateQuiz(node.title, context, 5, roleDef?.name, roleDef?.storyStyle)
         
         battle.initBattle(node.id, result.bossName, result.questions)
       } catch {
@@ -62,7 +65,7 @@ export const BattlePage: React.FC = () => {
     if (battle.status === "idle" || battle.status === "victory" || battle.status === "lose") {
       fetchQuiz()
     }
-  }, [node, id, battle.status, battle.currentBossId, battle])
+  }, [node, nodeId, battle.status, battle.currentBossId, battle, role])
 
   if (isLoading) {
     return (

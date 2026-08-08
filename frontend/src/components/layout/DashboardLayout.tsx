@@ -1,16 +1,18 @@
 import React, { useState } from "react"
-import { Menu, X } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Menu, X, LogOut } from "lucide-react"
+import { Link, Outlet } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 // usePlayerStore removed
 import { useAdventureStore } from "@/store/useAdventureStore"
+import { usePlayerStore } from "@/store/usePlayerStore"
+import { supabase } from "@/lib/supabase"
 import { CharacterWidget } from "@/components/layout/CharacterWidget"
 
 import questifyLogo from "@/assets/questify-q-logo.png"
 import mageAvatar from "@/assets/mage-avatar.png"
 
 interface DashboardLayoutProps {
-  children: React.ReactNode
+  children?: React.ReactNode
   variant?: "map" | "quest"
 }
 
@@ -20,6 +22,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, vari
   const { xp = 0, level = 1, maxXp = 100, gold = 0, worldName = "Peta Petualangan", nodes = [] } = activeAdventure || {}
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    useAdventureStore.getState().resetAdventures()
+    usePlayerStore.getState().resetPlayer()
+    // window.location.href = '/' // to force full reload, or we can use navigate
+  }
 
   // Derived stats for the center section
   const totalQuests = nodes.filter(n => !n.isBoss).length
@@ -151,6 +160,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, vari
                         <span className="material-symbols-outlined text-blue-400 text-sm">history_edu</span>
                         <span className="font-heading text-sm text-white">Petualanganku</span>
                       </Link>
+                      <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/40 border border-slate-700/30 hover:bg-slate-800 transition-colors text-left">
+                        <LogOut className="text-destructive/80 w-4 h-4 ml-0.5 mr-0.5" />
+                        <span className="font-heading text-sm text-destructive/90">Keluar</span>
+                      </button>
                     </div>
 
                   </div>
@@ -166,7 +179,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, vari
 
       {/* Main Content Area */}
       <main className="flex-1 relative overflow-hidden flex flex-col">
-        {children}
+        {children || <Outlet />}
       </main>
 
     </div>

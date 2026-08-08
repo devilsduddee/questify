@@ -153,10 +153,11 @@ export interface QuestMap {
 /**
  * Parses syllabus text into a sequence of Quest Nodes.
  */
-export async function generateQuest(syllabusText: string): Promise<QuestMap> {
+export async function generateQuest(syllabusText: string, playerRole?: string, storyStyle?: string): Promise<QuestMap> {
+  const roleContext = playerRole ? `\n\nPLAYER ROLE: ${playerRole}\nSTORY STYLE: ${storyStyle}\nYou MUST frame the storytelling, opening narration, world description, and boss descriptions using the above story style and player role. However, the ACADEMIC CONTENT and LEARNING OBJECTIVES MUST REMAIN IDENTICAL and unchanged.` : "";
   const prompt = `You are a curriculum designer for a retro RPG game.
 Your task is to take the following syllabus or learning material text and turn it into a structured "Quest Map".
-CRITICAL REQUIREMENT: All generated lore summaries, relic names, and flashcard descriptions MUST be written in Indonesian with an immersive fantasy RPG tone. Do NOT output English text.
+CRITICAL REQUIREMENT: All generated lore summaries, relic names, and flashcard descriptions MUST be written in Indonesian with an immersive fantasy RPG tone. Do NOT output English text.${roleContext}
 
 Extract the main topics into a sequential array of learning nodes. The first node should be available, the others locked, and the final node must be a boss node.
 
@@ -215,11 +216,12 @@ export interface LearningSummary {
 /**
  * Generates an ancient scroll summary for a specific quest topic.
  */
-export async function generateSummary(topicTitle: string, syllabusContext: string): Promise<LearningSummary> {
+export async function generateSummary(topicTitle: string, syllabusContext: string, playerRole?: string, storyStyle?: string): Promise<LearningSummary> {
+  const roleContext = playerRole ? `\n\nPLAYER ROLE: ${playerRole}\nSTORY STYLE: ${storyStyle}\nYou MUST frame the narrative summary using the above story style and player role. However, the ACADEMIC CONTENT and KEY POINTS MUST REMAIN IDENTICAL and mathematically/factually accurate.` : "";
   const prompt = `You are an AI scholar in a retro RPG game.
 The player has encountered a quest node titled: "${topicTitle}".
 Context: ${syllabusContext}
-CRITICAL REQUIREMENT: All generated lore summaries, relic names, and flashcard descriptions MUST be written in Indonesian with an immersive fantasy RPG tone. Do NOT output English text.
+CRITICAL REQUIREMENT: All generated lore summaries, relic names, and flashcard descriptions MUST be written in Indonesian with an immersive fantasy RPG tone. Do NOT output English text.${roleContext}
 
 Provide a learning summary in the following JSON format:
 {
@@ -248,11 +250,12 @@ export interface BossQuiz {
 /**
  * Generates a boss battle quiz for a milestone topic.
  */
-export async function generateQuiz(topicTitle: string, syllabusContext: string, numQuestions: number = 5): Promise<BossQuiz> {
+export async function generateQuiz(topicTitle: string, syllabusContext: string, numQuestions: number = 5, playerRole?: string, storyStyle?: string): Promise<BossQuiz> {
+  const roleContext = playerRole ? `\n\nPLAYER ROLE: ${playerRole}\nSTORY STYLE: ${storyStyle}\nYou MUST frame the boss identity and questions flavor using the above story style and player role. However, the ACADEMIC CONTENT, QUESTIONS DIFFICULTY, and CORRECT ANSWERS MUST REMAIN IDENTICAL and unchanged.` : "";
   const prompt = `You are the Game Master of a retro RPG. 
 The player is facing a boss battle for the topic: "${topicTitle}".
 Context: ${syllabusContext}
-CRITICAL REQUIREMENT: All generated lore summaries, relic names, and flashcard descriptions MUST be written in Indonesian with an immersive fantasy RPG tone. Do NOT output English text.
+CRITICAL REQUIREMENT: All generated lore summaries, relic names, and flashcard descriptions MUST be written in Indonesian with an immersive fantasy RPG tone. Do NOT output English text.${roleContext}
 
 Generate exactly ${numQuestions} multiple-choice questions that test the player's knowledge.
 Output strictly in the following JSON format:

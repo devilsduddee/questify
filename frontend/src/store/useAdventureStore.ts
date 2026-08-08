@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+
 import { useAchievementUIStore } from './useAchievementUIStore'
 import { usePlayerStore } from './usePlayerStore'
 import { ACH_FIRST_ADVENTURE, ACH_LEVEL_MASTER, ACH_QUEST_MASTER, ACH_EXPLORER } from '../data/achievements'
@@ -78,6 +78,10 @@ export interface AdventureState {
   
   // Helper Getters
   getActive: () => Adventure | null
+  
+  // Cloud Sync
+  loadFromCloud: (adventures: Adventure[]) => void
+  resetAdventures: () => void
 }
 
 const INITIAL_ADVENTURE_STATE = {
@@ -89,7 +93,6 @@ const INITIAL_ADVENTURE_STATE = {
 }
 
 export const useAdventureStore = create<AdventureState>()(
-  persist(
     (set, get) => ({
       adventures: [],
       activeAdventureId: null,
@@ -128,6 +131,10 @@ export const useAdventureStore = create<AdventureState>()(
         if (!playerStore.globalAchievements.find(a => a.id === ACH_FIRST_ADVENTURE)) {
           playerStore.unlockGlobalAchievement(ACH_FIRST_ADVENTURE)
         }
+        
+        import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
+          cloudSyncService.syncAdventure(newAdventure)
+        })
       },
 
       setActiveAdventure: (id) => set(state => {
@@ -142,11 +149,22 @@ export const useAdventureStore = create<AdventureState>()(
         const updated = state.adventures.map(a =>
           a.id === id ? { ...a, hasSeenIntro: true } : a
         )
+        const adv = updated.find(a => a.id === id)
+        if (adv) {
+          import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
+            cloudSyncService.syncAdventure(adv)
+          })
+        }
         return { adventures: updated }
       }),
 
       deleteAdventure: (id) => set(state => {
         const remaining = state.adventures.filter(a => a.id !== id)
+        
+        import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
+          cloudSyncService.deleteAdventure(id)
+        })
+        
         return {
           adventures: remaining,
           activeAdventureId: state.activeAdventureId === id 
@@ -186,12 +204,26 @@ export const useAdventureStore = create<AdventureState>()(
           }
         }
         
+        if (updatedAdv) {
+          import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
+            cloudSyncService.syncAdventure(updatedAdv)
+          })
+        }
+
         return newState
       }),
 
       gainGold: (amount) => set(state => {
         const { activeAdventureId, adventures } = state
         if (!activeAdventureId) return state
+        
+        const updatedAdv = adventures.find(a => a.id === activeAdventureId)
+        if (updatedAdv) {
+          const syncedAdv = { ...updatedAdv, gold: updatedAdv.gold + amount, lastPlayedAt: Date.now() }
+          import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
+            cloudSyncService.syncAdventure(syncedAdv)
+          })
+        }
         
         return {
           adventures: adventures.map(adv => 
@@ -219,6 +251,12 @@ export const useAdventureStore = create<AdventureState>()(
         
         if (wasUnlocked) {
           useAchievementUIStore.getState().enqueuePopup(achievementId)
+          const updatedAdv = newState.adventures.find(a => a.id === activeAdventureId)
+          if (updatedAdv) {
+            import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
+              cloudSyncService.syncAdventure(updatedAdv)
+            })
+          }
         }
         
         return newState
@@ -262,6 +300,10 @@ export const useAdventureStore = create<AdventureState>()(
               useAchievementUIStore.getState().enqueuePopup(ACH_EXPLORER)
             }
             
+            import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
+              cloudSyncService.syncAdventure(newAdv)
+            })
+            
             return newAdv
           })
         }
@@ -278,75 +320,27 @@ export const useAdventureStore = create<AdventureState>()(
               ...n,
               status: (idx === 0 ? "available" : "locked") as any
             }))
-            return {
+            const newAdv = {
               ...adv,
               nodes: mappedNodes,
               activeNodeId: mappedNodes[0]?.id || null,
               lastPlayedAt: Date.now()
             }
+            import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
+              cloudSyncService.syncAdventure(newAdv)
+            })
+            return newAdv
           })
         }
-      })
-    }),
-    {
-      name: 'questify-adventure-storage-v2',
-      version: 2,
-      onRehydrateStorage: () => (state, error) => {
-        if (error || !state) return
+      }),
 
-        // Inline Migration for old string-based achievements to object-based
-        if (state.adventures && state.adventures.length > 0) {
-          state.adventures.forEach(adv => {
-            if (adv.achievements && adv.achievements.length > 0 && typeof adv.achievements[0] === 'string') {
-              adv.achievements = (adv.achievements as any as string[]).map(id => ({
-                id,
-                unlockedAt: adv.createdAt || Date.now()
-              }))
-            }
-          })
-        }
+      loadFromCloud: (adventures) => set({ 
+        adventures, 
+        activeAdventureId: adventures.length > 0 ? adventures[0].id : null 
+      }),
 
-        // Migration Logic from Old Storage to New Storage
-        if (state.adventures.length === 0) {
-          try {
-            const oldPlayerStr = localStorage.getItem('questify-player-storage')
-            const oldMapStr = localStorage.getItem('questify-map-storage')
-            
-            if (oldMapStr) {
-              const oldMap = JSON.parse(oldMapStr)
-              const oldPlayer = oldPlayerStr ? JSON.parse(oldPlayerStr) : null
-              
-              if (oldMap.state && oldMap.state.nodes && oldMap.state.nodes.length > 0) {
-                // We have old data to migrate
-                const migratedAdventure: Adventure = {
-                  id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15),
-                  courseName: "Materi Terunggah",
-                  worldName: oldMap.state.worldName || "The Kingdom of Databaseia",
-                  createdAt: Date.now(),
-                  lastPlayedAt: Date.now(),
-                  level: oldPlayer?.state?.level || 1,
-                  xp: oldPlayer?.state?.xp || 0,
-                  maxXp: oldPlayer?.state?.maxXp || 100,
-                  gold: oldPlayer?.state?.gold || 0,
-                  achievements: (oldPlayer?.state?.achievements || []).map((id: string) => ({ id, unlockedAt: Date.now() })),
-                  nodes: oldMap.state.nodes,
-                  activeNodeId: oldMap.state.activeNodeId || null
-                }
-                
-                // Use setState to properly trigger re-renders and save
-                useAdventureStore.setState({
-                  adventures: [migratedAdventure],
-                  activeAdventureId: migratedAdventure.id
-                })
-                
-                localStorage.removeItem('questify-map-storage')
-              }
-            }
-          } catch {
-            // Migration failed, silently ignore
-          }
-        }
+      resetAdventures: () => {
+        set({ adventures: [], activeAdventureId: null })
       }
-    }
-  )
+    })
 )

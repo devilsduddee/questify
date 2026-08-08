@@ -62,26 +62,19 @@ export const MapPath: React.FC<MapPathProps> = ({ nodes }) => {
           className="drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]"
         />
         
-        {/* Magic Particles flowing down the path */}
-        <motion.circle
-          cx="10"
-          cy="0"
-          r="4"
-          fill="#f59e0b"
-          className="drop-shadow-[0_0_10px_#f59e0b] glow-gold"
-          animate={{ cy: ["0%", `${Math.max(10, completionPercentage)}%`] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-        />
-        <motion.circle
-          cx="10"
-          cy="0"
-          r="2"
-          fill="#fff"
-          className="drop-shadow-[0_0_5px_#fff]"
-          animate={{ cy: ["0%", `${Math.max(10, completionPercentage)}%`] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear", delay: 0.2 }}
-        />
       </svg>
+
+      {/* Magic Particles flowing down the path (Replaced SVG circle with div to fix Framer Motion SVG percent bugs) */}
+      <motion.div
+        className="absolute left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#f59e0b] drop-shadow-[0_0_10px_#f59e0b] glow-gold"
+        animate={{ top: ["0%", `${Math.max(10, completionPercentage)}%`] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+      />
+      <motion.div
+        className="absolute left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#fff] drop-shadow-[0_0_5px_#fff]"
+        animate={{ top: ["0%", `${Math.max(10, completionPercentage)}%`] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "linear", delay: 0.2 }}
+      />
       
     </div>
   )

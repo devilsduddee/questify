@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from "framer-motion"
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout"
 import { useAdventureStore } from "@/store/useAdventureStore"
+import { usePlayerStore } from "@/store/usePlayerStore"
+import { getRoleById } from "@/data/roles"
 import { generateSummary, LearningSummary } from "@/services/ai.service"
 import { Card, CardContent } from "@/components/ui/card"
 import { MotionButton } from "@/components/ui/button"
@@ -14,7 +16,7 @@ import { Flashcard } from "@/components/common/Flashcard"
 // removed ProgressBar
 
 export const QuestPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>()
+  const { nodeId } = useParams<{ nodeId: string }>()
   const navigate = useNavigate()
   
   const activeAdventure = useAdventureStore(state => state.getActive())
@@ -22,13 +24,14 @@ export const QuestPage: React.FC = () => {
   const gainXp = useAdventureStore(state => state.gainXp)
   const gainGold = useAdventureStore(state => state.gainGold)
   const nodes = activeAdventure?.nodes || []
+  const { role } = usePlayerStore()
 
   const [summary, setSummary] = useState<LearningSummary | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showVictoryModal, setShowVictoryModal] = useState(false)
 
-  const node = nodes.find(n => n.id === id)
+  const node = nodes.find(n => n.id === nodeId)
 
   useEffect(() => {
     if (!node) return
@@ -37,7 +40,8 @@ export const QuestPage: React.FC = () => {
       setIsLoading(true)
       try {
         const context = `Provide a comprehensive learning overview about ${node.title}: ${node.description}`
-        const result = await generateSummary(node.title, context)
+        const roleDef = getRoleById(role)
+        const result = await generateSummary(node.title, context, roleDef?.name, roleDef?.storyStyle)
         setSummary(result)
       } catch {
         setError("Sang Pustakawan AI gagal membaca materi ini. Coba lagi nanti.")
@@ -47,9 +51,9 @@ export const QuestPage: React.FC = () => {
     }
 
     fetchKnowledge()
-  }, [node])
+  }, [node, role])
 
-  if (!activeAdventure) {
+  if (!activeAdventure || !node) {
     return (
       <DashboardLayout variant="quest">
         <div className="flex-1 overflow-y-auto flex items-center justify-center flex-col gap-4 pt-24 md:pt-20">

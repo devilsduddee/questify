@@ -9,6 +9,8 @@ import { FadeIn, SlideUp } from "@/components/common/AnimationWrapper"
 import { cn } from "@/utils/cn"
 import { validateFile, parseTxtFile, parsePdfFile } from "./utils"
 import { generateQuest } from "@/services/ai.service"
+import { usePlayerStore } from "@/store/usePlayerStore"
+import { getRoleById } from "@/data/roles"
 import { useAdventureStore } from "@/store/useAdventureStore"
 import { useNavigate } from "react-router-dom"
 
@@ -77,7 +79,9 @@ export const SyllabusUpload: React.FC = () => {
     setError(null)
     
     try {
-      const result = await generateQuest(parsedText)
+      const { role } = usePlayerStore.getState()
+      const roleDef = getRoleById(role)
+      const result = await generateQuest(parsedText, roleDef?.name, roleDef?.storyStyle)
       // Result is already validated by ai.service.ts
       // Generate a course name based on fileName, or just "Manual Input"
       const courseName = fileName ? fileName.replace(/\.[^/.]+$/, "") : "Course"

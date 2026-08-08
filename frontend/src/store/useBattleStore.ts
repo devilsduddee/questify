@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+
 import { QuizQuestion } from '@/services/ai.service'
 
 export type BattleStatus = "idle" | "loading" | "active" | "victory" | "lose"
@@ -34,9 +34,7 @@ const INITIAL_STATE = {
   status: "idle" as BattleStatus
 }
 
-export const useBattleStore = create<BattleState>()(
-  persist(
-    (set) => ({
+export const useBattleStore = create<BattleState>()((set) => ({
       ...INITIAL_STATE,
 
       initBattle: (bossId, bossName, questions) => {
@@ -89,9 +87,4 @@ export const useBattleStore = create<BattleState>()(
       }),
 
       resetBattle: () => set(INITIAL_STATE)
-    }),
-    {
-      name: 'questify-battle-storage'
-    }
-  )
-)
+    }))
