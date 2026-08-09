@@ -113,9 +113,11 @@ export const QuestPage: React.FC = () => {
   }
 
   const handleComplete = () => {
-    completeNode(node.id)
-    gainXp(100)
-    gainGold(50)
+    if (node?.status !== 'completed') {
+      completeNode(node.id)
+      gainXp(100)
+      gainGold(50)
+    }
     setShowVictoryModal(true)
   }
 
@@ -221,16 +223,34 @@ export const QuestPage: React.FC = () => {
                 Selamat! Anda telah menguasai materi ini dan mendapatkan hadiah berikut:
               </p>
 
-              <div className="flex items-center justify-center gap-4 mb-8">
-                <div className="flex flex-col items-center bg-slate-800/50 border border-slate-700 rounded-xl p-3 w-28 shadow-inner">
-                  <span className="material-symbols-outlined text-amber-400 text-3xl mb-1 drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]">toll</span>
-                  <span className="font-pixel text-amber-400 text-sm drop-shadow-md">+50 Gold</span>
+              {node?.status === 'completed' ? (
+                <div className="flex flex-col items-center justify-center gap-4 mb-8">
+                  <div className="flex items-center justify-center gap-4 opacity-50 grayscale">
+                    <div className="flex flex-col items-center bg-slate-800/50 border border-slate-700 rounded-xl p-3 w-28 shadow-inner">
+                      <span className="material-symbols-outlined text-amber-400 text-3xl mb-1 drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]">toll</span>
+                      <span className="font-pixel text-amber-400 text-sm drop-shadow-md">+50 Gold</span>
+                    </div>
+                    <div className="flex flex-col items-center bg-slate-800/50 border border-slate-700 rounded-xl p-3 w-28 shadow-inner">
+                      <Star className="text-purple-400 w-8 h-8 mb-1 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+                      <span className="font-pixel text-purple-400 text-sm drop-shadow-md">+100 EXP</span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-amber-500/80 font-pixel uppercase tracking-widest bg-black/40 px-3 py-1 rounded">
+                    PRACTICE COMPLETE (No additional EXP/Coins awarded)
+                  </span>
                 </div>
-                <div className="flex flex-col items-center bg-slate-800/50 border border-slate-700 rounded-xl p-3 w-28 shadow-inner">
-                  <Star className="text-purple-400 w-8 h-8 mb-1 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
-                  <span className="font-pixel text-purple-400 text-sm drop-shadow-md">+100 EXP</span>
+              ) : (
+                <div className="flex items-center justify-center gap-4 mb-8">
+                  <div className="flex flex-col items-center bg-slate-800/50 border border-slate-700 rounded-xl p-3 w-28 shadow-inner">
+                    <span className="material-symbols-outlined text-amber-400 text-3xl mb-1 drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]">toll</span>
+                    <span className="font-pixel text-amber-400 text-sm drop-shadow-md">+50 Gold</span>
+                  </div>
+                  <div className="flex flex-col items-center bg-slate-800/50 border border-slate-700 rounded-xl p-3 w-28 shadow-inner">
+                    <Star className="text-purple-400 w-8 h-8 mb-1 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+                    <span className="font-pixel text-purple-400 text-sm drop-shadow-md">+100 EXP</span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <MotionButton
                 onClick={() => navigate('/map')}
