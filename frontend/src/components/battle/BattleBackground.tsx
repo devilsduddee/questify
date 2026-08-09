@@ -1,15 +1,22 @@
 import React from "react"
 import { motion } from "framer-motion"
+import darkCitadelBg from "@/assets/dark-citadel-bg.png"
 
 export const BattleBackground: React.FC = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#050505]">
       
+      {/* Base Citadel Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60 mix-blend-luminosity"
+        style={{ backgroundImage: `url(${darkCitadelBg})` }}
+      />
+      
       {/* Deep dungeon radial gradient (Kabut tebal) */}
       <motion.div 
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900/30 via-slate-900/80 to-[#050505]"
-        animate={{ opacity: [0.8, 1, 0.8] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900/40 via-red-950/70 to-[#050505]/90 mix-blend-multiply"
+        animate={{ opacity: [0.7, 0.9, 0.7] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       />
 
       {/* Ancient floor pattern with 3D perspective distortion */}

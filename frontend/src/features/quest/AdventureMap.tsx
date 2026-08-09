@@ -21,10 +21,10 @@ export const AdventureMap: React.FC = () => {
   const activeNode = nodes.find(n => n.id === activeNodeId)
 
   return (
-    <div className="w-full h-full flex flex-col lg:flex-row relative bg-[#0F172A] overflow-hidden">
+    <div className="w-full h-full flex flex-col lg:flex-row relative bg-[#0F172A] overflow-hidden overflow-x-hidden">
       
       {/* Map Area */}
-      <div className="flex-1 relative overflow-y-auto custom-scrollbar p-12 pt-[calc(3rem+6rem)] md:pt-[calc(3rem+5rem)] lg:pr-[22rem]">
+      <div className="flex-1 relative overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] p-12 pt-[calc(3rem+6rem)] md:pt-[calc(3rem+5rem)] lg:pr-[22rem]">
         
         {/* The Kingdom of Databaseia Map Background */}
         <MapBackground />
@@ -74,20 +74,21 @@ export const AdventureMap: React.FC = () => {
       </div>
 
       {/* Side Mission Tracker (Desktop only) */}
-      <div className="fixed right-0 lg:right-6 top-24 h-[calc(100vh-7rem)] z-20 hidden lg:flex w-80 bg-background/90 backdrop-blur-md border-[3px] border-border/50 rounded-xl p-lg flex-col shadow-panel pixel-borders">
-        <h3 className="font-heading text-xl text-secondary mb-6 text-glow border-b border-border/50 pb-4">Active Quest</h3>
+      <div className="fixed right-0 lg:right-6 top-24 h-[calc(100vh-120px)] max-h-[calc(100vh-120px)] z-20 hidden lg:flex w-80 bg-background/90 backdrop-blur-md border-[3px] border-border/50 rounded-xl p-4 lg:p-6 flex-col shadow-panel pixel-borders overflow-y-auto">
+        <h3 className="font-heading text-xl text-secondary mb-6 text-glow border-b border-border/50 pb-4 shrink-0">Active Quest</h3>
         
         {activeNode ? (
-          <Card variant="scroll" className="bg-[#2D1B13]/80 border-none shadow-xl">
-            <CardHeader className="pb-2">
+          <div className="bg-slate-900/90 border-2 border-slate-800 rounded-2xl p-5 flex flex-col justify-between h-full overflow-hidden relative">
+            <div className="flex flex-col items-start gap-1 shrink-0">
+              {activeNode.status === "completed" && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 font-pixel text-[10px] tracking-wider mb-2">✓ SUDAH PAHAM</span>
+              )}
               <CardTitle className="text-lg">{activeNode.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-6 font-sans">
-                {activeNode.description}
-              </p>
+            </div>
+            
+            <div className="flex-1 flex flex-col justify-between min-h-0 overflow-hidden pr-2">
               
-              <div className="flex flex-col gap-2 font-pixel text-xs">
+              <div className="flex flex-col gap-2 font-pixel text-xs mt-auto mb-6 shrink-0">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Difficulty:</span>
                   <span className={activeNode.isBoss ? "text-destructive" : "text-primary"}>
@@ -101,7 +102,7 @@ export const AdventureMap: React.FC = () => {
               </div>
 
               <MotionButton 
-                className="w-full mt-6 font-pixel text-xs" 
+                className="w-full font-pixel text-xs shrink-0" 
                 variant={activeNode.isBoss ? "destructive" : "default"}
                 onClick={() => {
                   if (activeNode.isBoss) {
@@ -113,10 +114,12 @@ export const AdventureMap: React.FC = () => {
                   }
                 }}
               >
-                {activeNode.isBoss ? "ENTER ARENA" : "START QUEST"}
+                {activeNode.status === "completed" 
+                  ? (activeNode.isBoss ? "REVISIT ARENA" : "KUNJUNGI KEMBALI") 
+                  : (activeNode.isBoss ? "ENTER ARENA" : "START QUEST")}
               </MotionButton>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ) : (
           <div className="text-center text-muted-foreground text-sm italic">
             No active quest selected.

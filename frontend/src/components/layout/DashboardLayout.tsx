@@ -37,6 +37,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, vari
   const totalQuests = nodes.filter(n => !n.isBoss).length
   const totalBosses = nodes.filter(n => n.isBoss).length
 
+  // Chapter Logic
+  const activeNodeIndex = nodes.findIndex(n => n.id === activeAdventure?.activeNodeId)
+  let subHeaderText = "2 Bab • 12 Quest • 1 Boss"
+  
+  if (nodes.length > 0) {
+    if (activeNodeIndex !== -1 && activeNodeIndex < 6) {
+      subHeaderText = "Bab 1 • 6 Quest"
+    } else if (activeNodeIndex >= 6) {
+      subHeaderText = "Bab 2 • 6 Quest"
+    }
+  }
+
   // Conditional styles based on variant
   const isQuest = variant === "quest"
   const headerClasses = isQuest
@@ -71,11 +83,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, vari
             {worldName || "Peta Petualangan"}
           </h2>
           <div className="text-xs text-muted-foreground font-pixel mt-1 flex gap-2 opacity-80">
-            <span>Bab 1</span>
-            <span>•</span>
-            <span>{totalQuests} Quest</span>
-            <span>•</span>
-            <span>{totalBosses} Boss</span>
+            <span>{subHeaderText}</span>
           </div>
         </div>
 

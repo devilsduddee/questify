@@ -182,7 +182,12 @@ export async function generateQuest(syllabusText: string, playerRole?: string, s
 Your task is to take the following syllabus or learning material text and turn it into a structured "Quest Map".
 CRITICAL REQUIREMENT: All generated lore summaries, relic names, and flashcard descriptions MUST be written in Indonesian with an immersive fantasy RPG tone. Do NOT output English text.${roleContext}
 
-Extract the main topics into a sequential array of learning nodes. The first node should be available, the others locked, and the final node must be a boss node.
+Extract the main topics into a sequential array of EXACTLY 12 learning nodes (Quests). 
+These 12 quests MUST be structurally partitioned into 2 chapters:
+- Bab 1 (Quest 1 to 6)
+- Bab 2 (Quest 7 to 12)
+
+The 12th node MUST be the final boss node. The first node should be available, the others locked.
 
 Text:
 ${syllabusText.substring(0, 5000)}
@@ -211,15 +216,16 @@ Output strictly in the following JSON format:
       "description": "Deskripsi quest ini",
       "difficulty": "easy" | "medium" | "hard",
       "isBoss": false,
-      "chapterTheme": "Tema area untuk quest ini"
+      "chapterTheme": "Tema Bab 1"
     },
+    // ... exactly 10 more nodes here ...
     {
-      "id": "2",
+      "id": "12",
       "title": "...",
       "description": "...",
       "difficulty": "hard",
       "isBoss": true,
-      "chapterTheme": "Markas Bos Akhir",
+      "chapterTheme": "Tema Bab 2 (Markas Bos Akhir)",
       "boss": {
         "name": "Nama bos keren (e.g. Lord Syntax)",
         "description": "Deskripsi singkat bos ini"

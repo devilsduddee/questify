@@ -75,7 +75,7 @@ export const BattlePage: React.FC = () => {
     }
 
     // LAYER 1: Existing Data Guard
-    if ((node as any).quizData) {
+    if ((node as any).quizData && (node as any).quizData.questions?.length >= 9) {
       if (isLoading) {
         logger.success('Battle', '✅ Quiz loaded from cache')
         logger.info('AI', `⏭️ generateQuiz SKIPPED - existing data node=${node.id}`)
@@ -103,7 +103,7 @@ export const BattlePage: React.FC = () => {
         logger.info('AI', `🤖 generateQuiz START node=${node.id}`)
         const context = `Berikan kuis pertarungan bos yang sulit untuk menguji pengetahuan tentang ${node.title}: ${node.description}`
         const roleDef = getRoleById(role)
-        const result = await generateQuiz(node.title, context, 5, roleDef?.name, roleDef?.storyStyle)
+        const result = await generateQuiz(node.title, context, 9, roleDef?.name, roleDef?.storyStyle)
         
         logger.info('AI', `✅ generateQuiz SUCCESS node=${node.id}`)
         
@@ -131,15 +131,15 @@ export const BattlePage: React.FC = () => {
     return (
       <DashboardLayout variant="quest">
         <BattleBackground />
-        <div className="flex-1 relative overflow-y-auto w-full pt-24 md:pt-20">
+        <div className="flex-1 relative overflow-y-auto w-full pt-32 md:pt-40 pb-20">
           <div className="min-h-full flex flex-col items-center justify-center p-6 text-center">
             <AnimatePresence mode="wait">
-              <ScaleIn key={loadingMsgIdx}>
-                <Skull className="w-32 h-32 text-destructive mb-8 animate-pulse shadow-glow-boss mx-auto" />
-                <h1 className="font-heading text-4xl md:text-5xl text-destructive text-glow mb-4 uppercase tracking-widest">
-                  Memanggil Penjaga...
+              <ScaleIn key={loadingMsgIdx} className="flex flex-col items-center justify-center gap-6">
+                <Skull className="w-32 h-32 text-destructive animate-pulse shadow-glow-boss mx-auto" />
+                <h1 className="font-heading text-4xl md:text-5xl text-destructive text-glow uppercase tracking-widest mt-4">
+                  Memanggil Bos...
                 </h1>
-                <p className="font-pixel text-secondary text-sm h-6 opacity-90 animate-pulse">
+                <p className="font-pixel text-secondary text-sm h-6 opacity-90 animate-pulse mt-2">
                   {LOADING_MESSAGES[loadingMsgIdx]}
                 </p>
               </ScaleIn>
@@ -191,10 +191,12 @@ export const BattlePage: React.FC = () => {
   }
 
   const handleVictory = () => {
-    if (node) completeNode(node.id)
-    gainXp(500)
-    gainGold(200)
-    unlockAchievement("BOSS_SLAYER")
+    if (node?.status !== 'completed') {
+      if (node) completeNode(node.id)
+      gainXp(500)
+      gainGold(200)
+      unlockAchievement("BOSS_SLAYER")
+    }
     battle.resetBattle()
     navigate('/map')
   }
@@ -279,43 +281,72 @@ export const BattlePage: React.FC = () => {
               )}
 
               {battle.status === "victory" && (
-                <ScaleIn key="victory" className="text-center flex flex-col items-center gap-8 py-20">
-                  <motion.div 
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", bounce: 0.5, duration: 1 }}
-                    className="w-40 h-40 rounded-full bg-success/20 flex items-center justify-center shadow-panel border-4 border-success"
-                  >
-                    <Trophy className="w-20 h-20 text-success" />
-                  </motion.div>
-                  
-                  <div className="space-y-2">
-                    <h2 className="font-heading text-6xl text-success text-glow uppercase tracking-widest">VICTORY</h2>
-                    <p className="text-muted-foreground font-pixel text-lg">Sang Bos telah lenyap menjadi debu.</p>
-                  </div>
-                  
-                  <div className="flex gap-8 mt-6 bg-[#1E293B]/80 backdrop-blur border border-border/50 rounded-2xl p-8 shadow-xl">
-                    <div className="text-center flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center border border-primary">
-                        <Swords className="w-6 h-6 text-primary" />
-                      </div>
-                      <div className="font-pixel text-primary text-2xl drop-shadow-md">+500</div>
-                      <div className="text-xs uppercase tracking-widest text-muted-foreground font-pixel">XP Obtained</div>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+                  <ScaleIn key="victory" className="relative w-full max-w-lg mx-auto p-6 md:p-8 rounded-3xl bg-slate-900/95 border-4 border-amber-500/80 shadow-[0_0_50px_rgba(251,191,36,0.3)] flex flex-col items-center justify-center gap-4 md:gap-6 text-center">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none rounded-3xl" />
+                    
+                    <motion.div 
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: "spring", bounce: 0.5, duration: 1 }}
+                      className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-amber-500/20 flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.5)] border-4 border-amber-400 relative z-10 shrink-0 mt-2"
+                    >
+                      <Trophy className="w-12 h-12 md:w-14 md:h-14 text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
+                    </motion.div>
+                    
+                    <div className="space-y-2 md:space-y-4 relative z-10">
+                      <h2 className="font-heading text-3xl md:text-5xl text-amber-400 text-glow uppercase tracking-widest leading-tight">SELAMAT!</h2>
+                      <p className="text-white font-pixel text-sm md:text-base leading-relaxed drop-shadow-md">
+                        KAMU TELAH MENAKLUKKAN SANG ARSITEK PROTOKOL!
+                      </p>
                     </div>
-                    <div className="w-px bg-border/50" />
-                    <div className="text-center flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center border border-secondary">
-                        <Coins className="w-6 h-6 text-secondary" />
+                    
+                    {node?.status === 'completed' ? (
+                      <div className="flex flex-col items-center gap-4 mt-2 bg-[#1E293B]/80 backdrop-blur border border-slate-600/30 rounded-2xl p-4 md:p-6 shadow-xl relative z-10 w-full max-w-md justify-center grayscale opacity-80">
+                        <div className="flex gap-6 md:gap-8">
+                          <div className="text-center flex flex-col items-center gap-2">
+                            <div className="w-10 h-10 md:w-12 md:h-12 bg-slate-500/20 rounded-full flex items-center justify-center border border-slate-500">
+                              <Swords className="w-5 h-5 md:w-6 md:h-6 text-slate-400" />
+                            </div>
+                            <div className="font-pixel text-slate-400 text-xl md:text-2xl drop-shadow-md">+500</div>
+                            <div className="text-[10px] md:text-xs uppercase tracking-widest text-muted-foreground font-pixel">XP Obtained</div>
+                          </div>
+                          <div className="w-px bg-border/50" />
+                          <div className="text-center flex flex-col items-center gap-2">
+                            <div className="w-10 h-10 md:w-12 md:h-12 bg-slate-500/20 rounded-full flex items-center justify-center border border-slate-500">
+                              <Coins className="w-5 h-5 md:w-6 md:h-6 text-slate-400" />
+                            </div>
+                            <div className="font-pixel text-slate-400 text-xl md:text-2xl drop-shadow-md">+200</div>
+                            <div className="text-[10px] md:text-xs uppercase tracking-widest text-muted-foreground font-pixel">Gold Looted</div>
+                          </div>
+                        </div>
+                        <span className="text-[10px] text-amber-500/80 font-pixel uppercase tracking-widest mt-2 bg-black/40 px-3 py-1 rounded">PRACTICE COMPLETE (No additional EXP/Coins awarded)</span>
                       </div>
-                      <div className="font-pixel text-secondary text-2xl drop-shadow-md">+200</div>
-                      <div className="text-xs uppercase tracking-widest text-muted-foreground font-pixel">Gold Looted</div>
-                    </div>
-                  </div>
+                    ) : (
+                      <div className="flex gap-6 md:gap-8 mt-2 bg-[#1E293B]/80 backdrop-blur border border-amber-500/30 rounded-2xl p-4 md:p-6 shadow-xl relative z-10 w-full max-w-md justify-center">
+                        <div className="text-center flex flex-col items-center gap-2">
+                          <div className="w-10 h-10 md:w-12 md:h-12 bg-success-green/20 rounded-full flex items-center justify-center border border-success-green">
+                            <Swords className="w-5 h-5 md:w-6 md:h-6 text-success-green" />
+                          </div>
+                          <div className="font-pixel text-success-green text-xl md:text-2xl drop-shadow-md">+500</div>
+                          <div className="text-[10px] md:text-xs uppercase tracking-widest text-muted-foreground font-pixel">XP Obtained</div>
+                        </div>
+                        <div className="w-px bg-border/50" />
+                        <div className="text-center flex flex-col items-center gap-2">
+                          <div className="w-10 h-10 md:w-12 md:h-12 bg-amber-400/20 rounded-full flex items-center justify-center border border-amber-400">
+                            <Coins className="w-5 h-5 md:w-6 md:h-6 text-amber-400" />
+                          </div>
+                          <div className="font-pixel text-amber-400 text-xl md:text-2xl drop-shadow-md">+200</div>
+                          <div className="text-[10px] md:text-xs uppercase tracking-widest text-muted-foreground font-pixel">Gold Looted</div>
+                        </div>
+                      </div>
+                    )}
 
-                  <MotionButton size="lg" className="mt-8 font-pixel px-12 py-6 text-lg hover:shadow-glow-quest" onClick={handleVictory}>
-                    KLAIM HADIAH
-                  </MotionButton>
-                </ScaleIn>
+                    <MotionButton size="lg" className="mt-2 font-pixel px-8 md:px-12 py-4 md:py-6 text-sm md:text-base bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-[0_0_20px_rgba(245,158,11,0.5)] border-none relative z-10 w-full sm:w-auto shrink-0" onClick={handleVictory}>
+                      KEMBALI KE PETA
+                    </MotionButton>
+                  </ScaleIn>
+                </div>
               )}
 
               {battle.status === "lose" && (

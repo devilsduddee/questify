@@ -257,20 +257,20 @@ export const LandingPage: React.FC = () => {
                   <path d="M 80 55 C 80 35, 70 20, 50 15" fill="none" stroke="#8B5CF6" strokeWidth="2" strokeDasharray="4,4" className="animate-pulse" style={{ animationDelay: '500ms' }} />
                 </svg>
 
-                <div className="flex-1 w-full flex flex-col-reverse justify-between relative z-10 px-4 sm:px-8 pb-2">
-                  {/* Nodes */}
-                  <div className="self-start relative hover:-translate-y-2 hover:drop-shadow-md transition-all duration-300 cursor-pointer">
-                    <QuestNode state="completed" label="Bab 1" className="scale-[0.85] sm:scale-100 origin-left" />
-                  </div>
-                  
-                  <div className="self-end relative hover:-translate-y-2 hover:drop-shadow-md transition-all duration-300 cursor-pointer">
-                    <QuestNode state="available" label="Bab 2" className="scale-[0.85] sm:scale-100 origin-right" />
-                  </div>
+                  <div className="flex-1 w-full flex flex-col-reverse justify-between relative z-10 px-4 sm:px-8 pb-2">
+                    {/* Nodes */}
+                    <div className="self-start relative hover:-translate-y-2 hover:drop-shadow-md transition-all duration-300 cursor-pointer">
+                      <QuestNode state="completed" label="Bab 1 (Quest 1-6)" className="scale-[0.85] sm:scale-100 origin-left" />
+                    </div>
+                    
+                    <div className="self-end relative hover:-translate-y-2 hover:drop-shadow-md transition-all duration-300 cursor-pointer">
+                      <QuestNode state="available" label="Bab 2 (Quest 7-12)" className="scale-[0.85] sm:scale-100 origin-right" />
+                    </div>
 
-                  <div className="self-center relative hover:-translate-y-2 hover:drop-shadow-md transition-all duration-300 cursor-pointer -mt-4">
-                    <QuestNode state="boss" label="Ujian Akhir" className="scale-100 sm:scale-125 origin-top" />
+                    <div className="self-center relative hover:-translate-y-2 hover:drop-shadow-md transition-all duration-300 cursor-pointer -mt-4">
+                      <QuestNode state="boss" label="Final Boss" className="scale-100 sm:scale-125 origin-top" />
+                    </div>
                   </div>
-                </div>
               </div>
             </FadeIn>
           </div>

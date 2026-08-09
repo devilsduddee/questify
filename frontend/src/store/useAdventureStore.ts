@@ -74,6 +74,7 @@ export interface AdventureState {
   // Active Adventure Mutations
   gainXp: (amount: number) => void
   gainGold: (amount: number) => void
+  deductGold: (amount: number) => void
   unlockAchievement: (achievement: string) => void
   completeNode: (nodeId: string) => void
   resetActiveAdventureQuests: () => void
@@ -249,6 +250,27 @@ export const useAdventureStore = create<AdventureState>()(
           adventures: adventures.map(adv => 
             adv.id === activeAdventureId 
               ? { ...adv, gold: adv.gold + amount, lastPlayedAt: Date.now() } 
+              : adv
+          )
+        }
+      }),
+
+      deductGold: (amount) => set(state => {
+        const { activeAdventureId, adventures } = state
+        if (!activeAdventureId) return state
+        
+        const updatedAdv = adventures.find(a => a.id === activeAdventureId)
+        if (updatedAdv) {
+          const syncedAdv = { ...updatedAdv, gold: Math.max(0, updatedAdv.gold - amount), lastPlayedAt: Date.now() }
+          import('@/services/cloudSync.service').then(({ cloudSyncService }) => {
+            cloudSyncService.syncAdventure(syncedAdv)
+          })
+        }
+        
+        return {
+          adventures: adventures.map(adv => 
+            adv.id === activeAdventureId 
+              ? { ...adv, gold: Math.max(0, adv.gold - amount), lastPlayedAt: Date.now() } 
               : adv
           )
         }

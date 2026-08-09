@@ -38,17 +38,16 @@ export const useBattleStore = create<BattleState>()((set) => ({
       ...INITIAL_STATE,
 
       initBattle: (bossId, bossName, questions) => {
-        // Calculate max boss HP based on number of questions (e.g., each question deals 20 damage)
-        const totalHp = questions.length * 20
+        // Player and Boss start with strictly 100 HP
         set({
           currentBossId: bossId,
           bossName,
           questions,
           currentQuestionIndex: 0,
-          playerHp: 100, // Player always starts with 100 HP
+          playerHp: 100,
           maxPlayerHp: 100,
-          bossHp: totalHp,
-          maxBossHp: totalHp,
+          bossHp: 100,
+          maxBossHp: 100,
           status: "active"
         })
       },
@@ -62,8 +61,8 @@ export const useBattleStore = create<BattleState>()((set) => ({
         if (isCorrect) {
           newBossHp = Math.max(0, state.bossHp - 20)
         } else {
-          // Player takes damage, let's say 25 damage per wrong answer
-          newPlayerHp = Math.max(0, state.playerHp - 34) 
+          // Player takes 20 damage per wrong answer
+          newPlayerHp = Math.max(0, state.playerHp - 20) 
         }
 
         const newIndex = state.currentQuestionIndex + 1
@@ -72,9 +71,6 @@ export const useBattleStore = create<BattleState>()((set) => ({
         if (newBossHp <= 0) {
           newStatus = "victory"
         } else if (newPlayerHp <= 0) {
-          newStatus = "lose"
-        } else if (newIndex >= state.questions.length && newBossHp > 0) {
-          // Ran out of questions but boss still alive
           newStatus = "lose"
         }
 
