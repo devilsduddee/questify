@@ -33,6 +33,7 @@ export const QuestPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showVictoryModal, setShowVictoryModal] = useState(false)
+  const [isFirstClear, setIsFirstClear] = useState(false)
 
   const node = nodes.find(n => n.id === nodeId)
 
@@ -117,6 +118,7 @@ export const QuestPage: React.FC = () => {
       completeNode(node.id)
       gainXp(100)
       gainGold(50)
+      setIsFirstClear(true)
     }
     setShowVictoryModal(true)
   }
@@ -223,7 +225,7 @@ export const QuestPage: React.FC = () => {
                 Selamat! Anda telah menguasai materi ini dan mendapatkan hadiah berikut:
               </p>
 
-              {node?.status === 'completed' ? (
+              {(node?.status === 'completed' && !isFirstClear) ? (
                 <div className="flex flex-col items-center justify-center gap-4 mb-8">
                   <div className="flex items-center justify-center gap-4 opacity-50 grayscale">
                     <div className="flex flex-col items-center bg-slate-800/50 border border-slate-700 rounded-xl p-3 w-28 shadow-inner">
